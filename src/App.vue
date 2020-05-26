@@ -13,7 +13,7 @@ export default {
     return {routes: routes.routes,}
   },
   components: {
-    BaseLine
+    BaseLine,
   }
 }
 </script>
