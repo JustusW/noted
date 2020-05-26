@@ -1,17 +1,19 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <BaseLine id="app" :routes="routes">
+  </BaseLine>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import BaseLine from './components/baseline.vue'
+import routes from './routes'
 
 export default {
   name: 'App',
+  data: function () {
+    return {routes: routes.routes,}
+  },
   components: {
-    HelloWorld
+    BaseLine
   }
 }
 </script>
