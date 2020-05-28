@@ -2,14 +2,14 @@
     <v-app id="inspire">
         <NavBar :routes="routes"/>
 
-        <v-app-bar
-                app
-                color="indigo"
-                dark
-        >
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>Application</v-toolbar-title>
-        </v-app-bar>
+<!--        <v-app-bar-->
+<!--                app-->
+<!--                color="indigo"-->
+<!--                dark-->
+<!--        >-->
+<!--            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>-->
+<!--            <v-toolbar-title>Application</v-toolbar-title>-->
+<!--        </v-app-bar>-->
 
         <v-content>
             <v-container
@@ -43,3 +43,9 @@
         }),
     }
 </script>
+
+<style scoped>
+    .container {
+        padding: 0;
+    }
+</style>

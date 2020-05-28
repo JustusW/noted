@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
+    "lodash": "^4.17.15",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "tiptap": "^1.27.1",
@@ -16,7 +17,11 @@
     "tiptap-vuetify": "^2.20.0",
     "vue": "^2.6.11",
     "vue-draggable-resizable": "^2.2.0",
+    "vue-panzoom": "^1.1.1",
+    "vue-resize-directive": "^1.2.0",
     "vue-router": "^3.2.0",
+    "vue-zoomer": "^0.3.6",
+    "vue2-dropzone": "^3.6.0",
     "vuetify": "^2.2.29"
   },
   "devDependencies": {
