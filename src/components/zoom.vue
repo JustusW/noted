@@ -32,6 +32,11 @@
                 let tf = this.pz.getTransform()
                 let scaleP = tf.scale / this.pz.getMaxZoom()
                 this.pz.moveTo(-this.offset.x * tf.scale - x * scaleP, -this.offset.y * tf.scale - y * scaleP)
+                this.pz.moveBy(150, 150)
+            },
+            zoom(z) {
+                let tf = this.pz.getTransform()
+                this.pz.zoomAbs(tf.x, tf.y, z)
             },
             reset() {
                 this.moveTo(0, 0)

@@ -2,7 +2,7 @@
     <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
          @transform="ontransform">
         <Zoom
-                :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: false}"
+                :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: true}"
                 :offset="{
                     x: anchor.x,
                     y: anchor.y,
@@ -23,26 +23,13 @@
                v-on:click="newNote()">
             <v-icon class="material-icons">add</v-icon>
         </v-btn>
-        <v-btn style="position: fixed; top: 16px; left: 376px; "
-               :depressed="isGrid()"
-               v-bind:class="{
-                    'primary': isGrid(),
-                    'secondary': !isGrid(),
-                }"
-               v-on:click="anchor.grid=(isGrid()?[10,10]:[200,200])">
-            <v-icon>apps</v-icon>
-        </v-btn>
         <v-btn style="position: fixed; top: 16px; left: 476px; "
                v-on:click="center()">
             <v-icon>home</v-icon>
         </v-btn>
-        <v-btn style="position: fixed; top: 16px; left: 576px; "
-               v-on:click="jumpTo(anchor.notes[0].id)">
-            <v-icon>link</v-icon>
-        </v-btn>
         <vue-dropzone
                 ref="dropzone" id="dropzone" :options="dropzoneOptions"
-                style="position: fixed; top: 64px; left: 276px; max-height: 50px; "
+                style="position: fixed; top: 16px; left: 676px; max-height: 50px; "
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
     </div>
 </template>
@@ -115,9 +102,19 @@
         },
         methods: {
             checkRoute() {
-                if (this.$route.params.id !== ':id') {
+                let reset = false
+                if (this.$route.params.zoom !== undefined) {
+                    reset = true
+                    let zoom = this.$refs.zoom
+                    zoom.zoom(parseInt(this.$route.params.zoom))
+                }
+                if (this.$route.params.id !== undefined) {
+                    reset = true
                     this.$refs.zoom.shouldReset = false
-                    this.jumpTo(this.$route.params.id)
+                    this.jumpTo(parseInt(this.$route.params.id))
+                }
+                if (reset) {
+                    this.$router.push('/notes')
                 }
             },
             jumpTo(id) {

@@ -9,7 +9,7 @@
                 v-for="route in routes"
                 v-bind:key="route.name"
                 router-link
-                :to="route.path">
+                :to="route.link || route.path">
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
