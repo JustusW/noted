@@ -1,7 +1,13 @@
 <template>
     <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
          @transform="ontransform">
-        <Zoom :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: false}" ref="zoom">
+        <Zoom
+                :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: false}"
+                :offset="{
+                    x: anchor.x,
+                    y: anchor.y,
+                }"
+                ref="zoom">
             <div
                     class="notes"
                     :style="getStyle()"
@@ -30,6 +36,10 @@
                v-on:click="center()">
             <v-icon>home</v-icon>
         </v-btn>
+        <v-btn style="position: fixed; top: 16px; left: 576px; "
+               v-on:click="jumpTo(anchor.notes[0].id)">
+            <v-icon>link</v-icon>
+        </v-btn>
         <vue-dropzone
                 ref="dropzone" id="dropzone" :options="dropzoneOptions"
                 style="position: fixed; top: 64px; left: 276px; max-height: 50px; "
@@ -42,23 +52,27 @@
     import Anchor from './anchor'
     import Zoom from './zoom'
     import vue2Dropzone from 'vue2-dropzone'
-
-    let notes = [
-        {
-            name: 'sample note',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            y: 0, x: 0, width: 600, height: 400,
-        }
-    ]
+    import _ from 'lodash'
 
     let clientWidth = window.innerWidth
     let clientHeight = window.innerHeight
 
-    let anchor = {
-        notes: notes,
-        scale: 1,
-        grid: [10, 10],
+    if (!localStorage.anchor) {
+        localStorage.anchor = JSON.stringify({
+            notes: [
+                {
+                    id: 0,
+                    name: 'sample note',
+                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                    y: 0, x: 0, width: 600, height: 400,
+                }
+            ],
+            scale: 1,
+            grid: [10, 10],
+        })
     }
+
+    let anchor = JSON.parse(localStorage.anchor)
 
     export default {
         name: 'notes',
@@ -84,7 +98,41 @@
                 pivot: 'center',
             }
         },
+        mounted() {
+            this.$watch('anchor', _.debounce(function() {
+                localStorage.anchor = JSON.stringify(this.anchor)
+            }, 500), {deep: true})
+            this.$nextTick(function () {
+                this.checkRoute()
+            })
+        },
+        watch: {
+            $route() {
+                this.$nextTick(function () {
+                    this.checkRoute()
+                })
+            },
+        },
         methods: {
+            checkRoute() {
+                if (this.$route.params.id !== ':id') {
+                    this.$refs.zoom.shouldReset = false
+                    this.jumpTo(this.$route.params.id)
+                }
+            },
+            jumpTo(id) {
+                let zoom = this.$refs.zoom
+                let note = this.anchor.notes.find(val => {
+                    return val.id === parseInt(id)
+                })
+                if (!note) {
+                    return
+                }
+                let x = note.x
+                let y = note.y
+
+                zoom.moveTo(x, y)
+            },
             ontransform(e) {
                 let transform = e.detail.getTransform()
                 this.$set(this.anchor, 'scale', 5 / transform.scale)
@@ -123,6 +171,7 @@
                 }
                 this.anchor.notes.push({
                     text: content,
+                    id: this.anchor.notes.length,
                     x: 50, y: 50, width: 200, height: 200,
                 })
             },

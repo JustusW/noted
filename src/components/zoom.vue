@@ -1,5 +1,6 @@
 <template>
     <div style="width: 100%; height: 100%; "
+         @transform="transform"
     >
         <slot></slot>
     </div>
@@ -13,29 +14,39 @@
         name: "zoom",
         props: {
             options: Object,
+            offset: Object,
         },
         data: function () {
-            return {}
+            return {
+                shouldReset: true,
+            }
         },
         methods: {
+            transform() {
+                if (this.shouldReset === true) {
+                    this.shouldReset = false
+                    this.reset()
+                }
+            },
+            moveTo(x, y) {
+                let tf = this.pz.getTransform()
+                let scaleP = tf.scale / this.pz.getMaxZoom()
+                this.pz.moveTo(-this.offset.x * tf.scale - x * scaleP, -this.offset.y * tf.scale - y * scaleP)
+            },
             reset() {
-                let elm = this.$el.firstElementChild
-                let rect = elm.getBoundingClientRect()
-                let zw = rect.width
-                let zh = rect.height
-                this.pz.zoomTo(zw * 3, zh * 3, 5)
+                this.moveTo(0, 0)
             },
         },
         mounted() {
             this.pz = panzoom(this.$el, this.options)
 
-            this.reset()
-
             let zoom = this
             this.pz.on('transform', function (e) {
                 let ev = new CustomEvent('transform', {bubbles: true, detail: e})
-                zoom.$el.dispatchEvent(ev)
+                zoom.$el.firstElementChild.dispatchEvent(ev)
             })
+
+            this.pz.zoomAbs(0,0,3)
         },
         destroyed() {
             this.pz.dispose()

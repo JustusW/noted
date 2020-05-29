@@ -4,7 +4,7 @@ import Notes from './components/notes.vue'
 
 const routes = [
     {path: '/', component: Home, name: 'Home'},
-    {path: '/notes', component: Notes, name: 'Notes'},
+    {path: '/notes/:id', component: Notes, name: 'Notes'},
 ]
 
 export default {
