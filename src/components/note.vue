@@ -1,21 +1,17 @@
 <template>
-    <vue-draggable-resizable
-            @dragging="dr"
-            @resizing="dr"
-            :w="note.width"
-            :h="note.height"
-            :x="realX()"
-            :y="realY()"
-            :grid="anchor.grid"
-            :scale="anchor.scale">
+    <dragResize
+            :box="{x: this.note.x + this.anchor.x, y: this.note.y + this.anchor.y, w: this.note.width, h: this.note.height}"
+            :scale="anchor.scale"
+            ref="dr">
         <v-card
                 class="note mx-auto scroll-y"
                 outlined
                 shaped
+                dark
                 height="100%"
                 width="100%"
         >
-            <v-card-title>{{note.x}}/{{note.y}} | {{realX(true)}}/{{realY(true)}}</v-card-title>
+            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>
             <v-card-text v-html="note.text" @dblclick="dialog = true">
             </v-card-text>
         </v-card>
@@ -28,7 +24,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
-    </vue-draggable-resizable>
+    </dragResize>
 </template>
 
 <script>
@@ -50,13 +46,7 @@
         HorizontalRule,
         History
     } from 'tiptap-vuetify'
-
-    // function logXY(r) {
-    //     console.log(
-    //         'Anchor: (' + r.anchor.x + '/' + r.anchor.y + ') @' + r.anchor.scale
-    //         + 'Note: (' + r.note.x + '/' + r.note.y + ')'
-    //     )
-    // }
+    import dragResize from './dragresize'
 
     export default {
         name: 'note',
@@ -65,10 +55,17 @@
             anchor: Object,
         },
         components: {
-            TiptapVuetify
+            TiptapVuetify,
+            dragResize
         },
         data() {
             return {
+                box: {
+                    x: this.note.x + this.anchor.x,
+                    y: this.note.y + this.anchor.y,
+                    w: this.note.width,
+                    h: this.note.height,
+                },
                 dialog: false,
                 extensions: [
                     History,
@@ -93,31 +90,15 @@
                 ],
             }
         },
-        methods: {
-            dr: function (x, y, width, height) {
-                this.note.x = x - this.anchor.x
-                this.note.y = y - this.anchor.y
-                if (width >= 0) {
-                    this.note.width = width
-                }
-                if (height >= 0) {
-                    this.note.height = height
-                }
-            },
-            realX() {
-                let res = this.anchor.x + this.note.x
-                return res
-            },
-            realY() {
-                let res =  this.anchor.y + this.note.y
-                return res
-            },
-        },
+        methods: {},
         mounted() {
-            // bug with vue-draggable-resizable
-            this.note.x += 1
-            this.$nextTick(() => {
-                this.note.x -= 1
+            this.$watch('$refs.dr.rect', function (val) {
+                this.$set(this.note, 'x', val.x - this.anchor.x)
+                this.$set(this.note, 'y', val.y - this.anchor.y)
+                this.$set(this.note, 'width', val.w)
+                this.$set(this.note, 'height', val.h)
+            }, {
+                deep: true
             })
         },
     }
@@ -130,7 +111,9 @@
         height: 100%;
     }
 
-    .vdr {
-        border: 0;
+    .resizable-content {
+        height: 100%;
+        width: 100%;
+        background-color: aqua;
     }
 </style>

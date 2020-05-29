@@ -1,25 +1,25 @@
 <template>
-    <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;">
-        <Zoom :onscale="onscale">
+    <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
+         @transform="ontransform">
+        <Zoom :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: false}" ref="zoom">
             <div
                     class="notes"
                     :style="getStyle()"
                     v-on:mousedown="checkPrevention"
                     v-on:mousemove="checkPrevention"
                     v-on:dblclick="checkPrevention"
-                    v-resize:debounce="notesResized"
             >
                 <Note v-for="note in anchor.notes" v-bind:key="note.id" :note="note" :anchor="anchor"></Note>
                 <Anchor :anchor="anchor"></Anchor>
             </div>
         </Zoom>
         <v-btn style="position: fixed; top: 16px; left: 276px; "
-                v-on:click="newNote()">
+               v-on:click="newNote()">
             <v-icon class="material-icons">add</v-icon>
         </v-btn>
         <v-btn style="position: fixed; top: 16px; left: 376px; "
                :depressed="isGrid()"
-                v-bind:class="{
+               v-bind:class="{
                     'primary': isGrid(),
                     'secondary': !isGrid(),
                 }"
@@ -56,6 +56,7 @@
 
     let anchor = {
         notes: notes,
+        scale: 1,
         grid: [10, 10],
     }
 
@@ -84,8 +85,9 @@
             }
         },
         methods: {
-            onscale(scale) {
-                this.anchor.scale = scale
+            ontransform(e) {
+                let transform = e.detail.getTransform()
+                this.$set(this.anchor, 'scale', 5 / transform.scale)
             },
             checkPrevention(ev) {
                 let elm
@@ -113,7 +115,7 @@
             },
             fileAdded(file) {
                 this.newNote('<img src="' + URL.createObjectURL(file) + '" style="width: 100%; height: 100%;"/>')
-                this.$children[1].removeFile(file)
+                this.$refs.dropzone.removeFile(file)
             },
             newNote(content) {
                 if (!content) {
@@ -128,15 +130,8 @@
                 return this.anchor.grid[0] === 200 && this.anchor.grid[1] === 200
             },
             center() {
-                this.$children[0].zoom(5)
+                this.$refs.zoom.reset()
             },
-            notesResized() {
-            }
-        },
-        mounted: function () {
-            this.$nextTick(function () {
-                this.center()
-            })
         }
     }
 </script>
@@ -148,13 +143,19 @@
         height: 40px;
         padding: 5px 5px;
     }
+
     .dropzone .dz-default.dz-message {
         margin: 0;
+    }
+
+    .vue-pan-zoom-item, .vue-pan-zoom-scene {
+        height: 100%;
     }
 
     .notes {
         position: absolute;
         top: 0;
         left: 0;
+        transform: scale(0.2);
     }
 </style>

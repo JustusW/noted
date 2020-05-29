@@ -19,8 +19,8 @@
                 let y = notes.clientHeight / 2
                 x = x - (x % 200)
                 y = y - (y % 200)
-                this.anchor.x = x
-                this.anchor.y = y
+                this.$set(this.anchor, 'x', x)
+                this.$set(this.anchor, 'y', y)
                 this.reset()
             },
             reset() {
