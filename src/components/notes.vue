@@ -13,7 +13,7 @@
                     :style="getStyle()"
                     v-on:mousedown="checkPrevention"
                     v-on:mousemove="checkPrevention"
-                    v-on:dblclick="checkPrevention"
+                    v-on:dblclick.stop="doubleClick"
             >
                 <Note v-for="note in anchor.notes" v-bind:key="note.id" :note="note" :anchor="anchor"></Note>
                 <Anchor :anchor="anchor"></Anchor>
@@ -31,6 +31,12 @@
                 ref="dropzone" id="dropzone" :options="dropzoneOptions"
                 style="position: fixed; top: 16px; left: 676px; max-height: 50px; "
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
+        <div
+                v-on:addnote="addnote"
+                v-on:closeradial="closeradial"
+        >
+            <QuickMenu :options="{show: qmshow, x: qmx, y: qmy, layerX: qmlayerx, layerY: qmlayery}"></QuickMenu>
+        </div>
     </div>
 </template>
 
@@ -38,6 +44,7 @@
     import Note from './note'
     import Anchor from './anchor'
     import Zoom from './zoom'
+    import QuickMenu from './quickmenu'
     import vue2Dropzone from 'vue2-dropzone'
     import _ from 'lodash'
 
@@ -70,6 +77,7 @@
             Note,
             Anchor,
             Zoom,
+            QuickMenu,
             vueDropzone: vue2Dropzone
         },
         data: function () {
@@ -83,10 +91,15 @@
                     autoQueue: false,
                 },
                 pivot: 'center',
+                qmshow: false,
+                qmx: 0,
+                qmy: 0,
+                qmlayerx: 0,
+                qmlayery: 0,
             }
         },
         mounted() {
-            this.$watch('anchor', _.debounce(function() {
+            this.$watch('anchor', _.debounce(function () {
                 localStorage.anchor = JSON.stringify(this.anchor)
             }, 500), {deep: true})
             this.$nextTick(function () {
@@ -101,6 +114,13 @@
             },
         },
         methods: {
+            closeradial() {
+                this.qmshow = false
+            },
+            addnote(e) {
+                this.qmshow = false
+                this.newNote(undefined, e.detail.layerX - this.anchor.x, e.detail.layerY - this.anchor.y)
+            },
             checkRoute() {
                 let reset = false
                 if (this.$route.params.zoom !== undefined) {
@@ -134,6 +154,14 @@
                 let transform = e.detail.getTransform()
                 this.$set(this.anchor, 'scale', 5 / transform.scale)
             },
+            doubleClick(ev) {
+                this.qmshow = true
+                let rect = this.$el.getBoundingClientRect()
+                this.qmx = ev.clientX - rect.x
+                this.qmy = ev.clientY - rect.y
+                this.qmlayerx = ev.layerX
+                this.qmlayery = ev.layerY
+            },
             checkPrevention(ev) {
                 let elm
                 try {
@@ -162,14 +190,20 @@
                 this.newNote('<img src="' + URL.createObjectURL(file) + '" style="width: 100%; height: 100%;"/>')
                 this.$refs.dropzone.removeFile(file)
             },
-            newNote(content) {
+            newNote(content, x, y) {
                 if (!content) {
                     content = '<h1>Change me!</h1>'
+                }
+                if (x === undefined) {
+                    x = 50
+                }
+                if (y === undefined) {
+                    y = 50
                 }
                 this.anchor.notes.push({
                     text: content,
                     id: this.anchor.notes.length,
-                    x: 50, y: 50, width: 200, height: 200,
+                    x: x, y: y, width: 200, height: 200,
                 })
             },
             isGrid() {

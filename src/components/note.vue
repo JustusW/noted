@@ -12,7 +12,7 @@
                 width="100%"
         >
 <!--            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>-->
-            <v-card-text v-html="note.text" @dblclick="dialog = true">
+            <v-card-text v-html="note.text" @dblclick.stop="dialog = true">
             </v-card-text>
         </v-card>
         <v-dialog v-model="dialog">
