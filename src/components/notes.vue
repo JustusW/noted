@@ -1,12 +1,12 @@
 <template>
-    <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
          @transform="ontransform"
          @contextmenu.prevent.stop="doubleClick"
     >
         <div
                 v-on:qmadd="addnote"
                 v-on:qmhome="center"
-                v-on:closeradial="closeradial"
+                v-on:qmsave="save"
         >
             <QuickMenu
                     :options="{
@@ -14,6 +14,7 @@
                 items: [
                     {display: 'Add Note', event: 'menuaddnote'},
                     {display: 'Home', event: 'menuhome'},
+                    {display: 'save', event: 'menuhome'},
                     ],
             }"
                     ref="qm"
@@ -39,17 +40,9 @@
                 <Anchor :anchor="anchor"></Anchor>
             </div>
         </Zoom>
-        <v-btn style="position: fixed; top: 16px; left: 276px; "
-               v-on:click="newNote()">
-            <v-icon class="material-icons">add</v-icon>
-        </v-btn>
-        <v-btn style="position: fixed; top: 16px; left: 476px; "
-               v-on:click="center()">
-            <v-icon>home</v-icon>
-        </v-btn>
         <vue-dropzone
                 ref="dropzone" id="dropzone" :options="dropzoneOptions"
-                style="position: fixed; top: 16px; left: 676px; max-height: 50px; "
+                style="position: fixed; top: 64px; left: 64px; max-height: 50px; "
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
     </div>
 </template>
@@ -129,6 +122,19 @@
             },
         },
         methods: {
+            save() {
+                let data = JSON.stringify(this.anchor)
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
+                element.setAttribute('download', 'noted.json');
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            },
             closeradial() {
                 this.qmshow = false
             },
@@ -200,8 +206,15 @@
                     + 'height: ' + 5 * clientHeight + 'px; '
             },
             fileAdded(file) {
-                this.newNote('<img src="' + URL.createObjectURL(file) + '" style="width: 100%; height: 100%;"/>')
-                this.$refs.dropzone.removeFile(file)
+                if (file.name === 'noted.json') {
+                    file.text().then(t => {
+                        this.$refs.dropzone.removeFile(file)
+                        this.anchor = JSON.parse(t)
+                    })
+                } else {
+                    this.newNote('<img src="' + URL.createObjectURL(file) + '" style="width: 100%; height: 100%;"/>')
+                    this.$refs.dropzone.removeFile(file)
+                }
             },
             newNote(content, x, y) {
                 if (!content) {

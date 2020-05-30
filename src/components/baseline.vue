@@ -1,13 +1,18 @@
 <template>
     <v-app id="inspire">
-        <NavBar :routes="routes" :drawer="drawer"/>
-
+<!--        <NavBar :routes="routes" :drawer="drawer"/>-->
+        <vue-simple-context-menu
+                element-id="main_menu"
+                :options="routes"
+                ref="main_menu"
+                @option-clicked="click"
+        />
         <v-app-bar
                 app
                 color="indigo"
                 dark
         >
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon @click.stop="showMainMenu"></v-app-bar-nav-icon>
             <v-toolbar-title>Application</v-toolbar-title>
         </v-app-bar>
 
@@ -28,7 +33,7 @@
 </template>
 
 <script>
-    import NavBar from './navbar'
+    // import NavBar from './navbar'
 
     export default {
         props: {
@@ -36,11 +41,19 @@
             routes: Array,
         },
         components: {
-            NavBar
+            // NavBar
         },
         data: () => ({
             drawer: null,
         }),
+        methods: {
+            click(e) {
+                this.$router.push(e.option.link || e.option.path)
+            },
+            showMainMenu(e) {
+                this.$refs.main_menu.showMenu(e)
+            }
+        },
     }
 </script>
 

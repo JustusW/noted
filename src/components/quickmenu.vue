@@ -1,10 +1,11 @@
 <template>
     <vue-simple-context-menu
-            element-id="main_menu"
-            ref="main_menu"
+            element-id="canvas_menu"
+            ref="canvas_menu"
             :options="[
                 {name: 'add', class: 'material-icons',eventName:'qmadd'},
                 {name: 'home', class: 'material-icons',eventName:'qmhome'},
+                {name: 'save', class: 'material-icons',eventName:'qmsave'},
             ]"
             @option-clicked="handleClick"
     />
@@ -19,7 +20,7 @@
         },
         methods: {
             show(ev) {
-                this.$refs.main_menu.showMenu(ev, this.options)
+                this.$refs.canvas_menu.showMenu(ev, this.options)
             },
             centerClick() {
                 this.$el.dispatchEvent(new CustomEvent('closeradial', {bubbles: true, detail: this.options}))
