@@ -83,7 +83,7 @@
         },
         data: function () {
             return {
-                scaledTransform: {x:0, y: 0, scale: 1},
+                scaledTransform: {x: 0, y: 0, scale: 1},
                 anchor,
                 dropzoneOptions: {
                     url: '/',
@@ -173,23 +173,11 @@
                 console.log(this.qmlayerx, this.qmlayery)
             },
             checkPrevention(ev) {
-                let elm
-                try {
-                    elm = ev.originalTarget
-                } catch (e) {
-                    elm = ev.explicitOriginalTarget
-                } finally {
-                    let parent
-                    try {
-                        parent = elm.closest('.note, .anchor')
-                    } catch (e) {
-                        parent = true
-                    }
-
-                    if (parent) {
-                        ev.preventDefault()
-                        ev.stopImmediatePropagation()
-                    }
+                let elm = ev.target
+                let parent = elm.closest('.note, .anchor')
+                if (parent) {
+                    ev.preventDefault()
+                    ev.stopImmediatePropagation()
                 }
             },
             getStyle() {
@@ -243,7 +231,7 @@
     }
 
     .notes {
-        touch-action: none; 
+        touch-action: none;
         position: absolute;
         top: 0;
         left: 0;
