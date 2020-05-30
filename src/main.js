@@ -7,6 +7,9 @@ import 'tiptap-vuetify/dist/main.css'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css' // Ensure you are using css-loader
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
+
+import VueSimpleContextMenu from 'vue-simple-context-menu'
 
 import App from './App.vue'
 import router from './routes'
@@ -19,6 +22,8 @@ let vuetify = new Vuetify({
         iconfont: 'md',
     },
 })
+
+Vue.component('vue-simple-context-menu', VueSimpleContextMenu)
 
 new Vue({
     render: h => h(App),

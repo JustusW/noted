@@ -26,6 +26,7 @@
     "vue-resizable": "^1.2.0",
     "vue-resize-directive": "^1.2.0",
     "vue-router": "^3.2.0",
+    "vue-simple-context-menu": "^3.1.10",
     "vue-zoomer": "^0.3.6",
     "vue2-dropzone": "^3.6.0",
     "vuetify": "^2.2.29"

@@ -1,6 +1,25 @@
 <template>
     <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
-         @transform="ontransform">
+         @transform="ontransform"
+         @contextmenu.prevent.stop="doubleClick"
+    >
+        <div
+                v-on:qmadd="addnote"
+                v-on:qmhome="center"
+                v-on:closeradial="closeradial"
+        >
+            <QuickMenu
+                    :options="{
+                show: qmshow, x: qmx, y: qmy, layerX: qmlayerx, layerY: qmlayery,
+                items: [
+                    {display: 'Add Note', event: 'menuaddnote'},
+                    {display: 'Home', event: 'menuhome'},
+                    ],
+            }"
+                    ref="qm"
+            ></QuickMenu>
+        </div>
+
         <Zoom
                 :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: true, panning: true,which: -1,}"
                 :offset="{
@@ -32,12 +51,6 @@
                 ref="dropzone" id="dropzone" :options="dropzoneOptions"
                 style="position: fixed; top: 16px; left: 676px; max-height: 50px; "
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
-        <div
-                v-on:addnote="addnote"
-                v-on:closeradial="closeradial"
-        >
-            <QuickMenu :options="{show: qmshow, x: qmx, y: qmy, layerX: qmlayerx, layerY: qmlayery}"></QuickMenu>
-        </div>
     </div>
 </template>
 
@@ -119,9 +132,10 @@
             closeradial() {
                 this.qmshow = false
             },
-            addnote(e) {
+            addnote() {
                 this.qmshow = false
-                this.newNote(undefined, e.detail.layerX - this.anchor.x, e.detail.layerY - this.anchor.y)
+                // this.newNote(undefined, e.detail.layerX - this.anchor.x, e.detail.layerY - this.anchor.y)
+                this.newNote()
             },
             checkRoute() {
                 let reset = false
@@ -153,12 +167,13 @@
                 zoom.moveTo(x, y)
             },
             ontransform(e) {
+                this.qmshow = false
                 let transform = e.detail.getTransform()
                 this.scaledTransform = e.detail.getScaledTransform()
                 this.$set(this.anchor, 'scale', 5 / transform.scale)
             },
             doubleClick(ev) {
-                this.qmshow = true
+                this.$refs.qm.show(ev)
                 let rect = this.$el.getBoundingClientRect()
                 this.qmx = ev.clientX - rect.x
                 this.qmy = ev.clientY - rect.y
