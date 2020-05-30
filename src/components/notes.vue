@@ -7,6 +7,7 @@
                     x: anchor.x,
                     y: anchor.y,
                 }"
+                :dblclick="doubleClick"
                 ref="zoom">
             <div
                     class="notes"
@@ -82,6 +83,7 @@
         },
         data: function () {
             return {
+                scaledTransform: {x:0, y: 0, scale: 1},
                 anchor,
                 dropzoneOptions: {
                     url: '/',
@@ -152,6 +154,7 @@
             },
             ontransform(e) {
                 let transform = e.detail.getTransform()
+                this.scaledTransform = e.detail.getScaledTransform()
                 this.$set(this.anchor, 'scale', 5 / transform.scale)
             },
             doubleClick(ev) {
@@ -159,8 +162,15 @@
                 let rect = this.$el.getBoundingClientRect()
                 this.qmx = ev.clientX - rect.x
                 this.qmy = ev.clientY - rect.y
-                this.qmlayerx = ev.layerX
-                this.qmlayery = ev.layerY
+                if (ev.target.className === 'notes') {
+                    this.qmlayerx = ev.layerX
+                    this.qmlayery = ev.layerY
+                } else {
+                    this.qmlayerx = this.qmx + this.scaledTransform.x
+                    this.qmlayery = this.qmy + this.scaledTransform.y
+                    console.log(this.scaledTransform)
+                }
+                console.log(this.qmlayerx, this.qmlayery)
             },
             checkPrevention(ev) {
                 let elm

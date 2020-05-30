@@ -15,6 +15,7 @@
         props: {
             options: Object,
             offset: Object,
+            dblclick: Function,
         },
         data: function () {
             return {
@@ -43,15 +44,45 @@
             },
         },
         mounted() {
-            this.pz = panzoom(this.$el, this.options)
+            let z = this
+            let elm = this.$el
+            let opts = this.options
+            opts.zoomDoubleClickSpeed = 1
+            opts.onDoubleClick = function (e) {
+                z.dblclick(e)
+
+                let rect = elm.getBoundingClientRect()
+                let tf = z.pz.getTransform()
+                Object.defineProperty(e, 'clientX', {get: function () {
+                        return -tf.x + rect.x
+                    }})
+                Object.defineProperty(e, 'clientY', {get: function () {
+                        return -tf.y + rect.y
+                    }})
+
+                return false
+            }
+            this.pz = panzoom(this.$el, opts)
 
             let zoom = this
-            this.pz.on('transform', function (e) {
-                let ev = new CustomEvent('transform', {bubbles: true, detail: e})
-                zoom.$el.firstElementChild.dispatchEvent(ev)
-            })
+            this.pz
+                .on('transform', function (e) {
+                    let ev = new CustomEvent('transform', {
+                        bubbles: true,
+                        detail: {
+                            getTransform: e.getTransform,
+                            getScaledTransform: function () {
+                                let r = zoom.$el.getBoundingClientRect()
+                                let rc = zoom.$el.firstElementChild.getBoundingClientRect()
+                                let rp = zoom.$el.parentNode.getBoundingClientRect()
+                                console.log(r.x, r.y, rp.x, rp.y, rc.x, rc.y)
+                            }
+                        }
+                    })
+                    zoom.$el.firstElementChild.dispatchEvent(ev)
+                })
 
-            this.pz.zoomAbs(0,0,3)
+            this.pz.zoomAbs(0, 0, 3)
         },
         destroyed() {
             this.pz.dispose()
