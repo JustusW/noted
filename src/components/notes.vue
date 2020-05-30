@@ -212,8 +212,18 @@
                         this.anchor = JSON.parse(t)
                     })
                 } else {
-                    this.newNote('<img src="' + URL.createObjectURL(file) + '" style="width: 100%; height: 100%;"/>')
-                    this.$refs.dropzone.removeFile(file)
+                    const toBase64 = file => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = error => reject(error);
+                    });
+                    toBase64(file).then(bs => {
+                        console.log(bs)
+                        this.$refs.dropzone.removeFile(file)
+                        this.newNote('<img src="' + bs + '" style="width: 100%; height: 100%;"/>')
+                    })
+
                 }
             },
             newNote(content, x, y) {
