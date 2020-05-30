@@ -2,7 +2,7 @@
     <div style="position: relative; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
          @transform="ontransform">
         <Zoom
-                :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: true}"
+                :options="{minZoom:1, maxZoom: 5, zoomSpeed: 0.065, smoothScroll: true, panning: true,which: -1,}"
                 :offset="{
                     x: anchor.x,
                     y: anchor.y,
@@ -199,6 +199,7 @@
     }
 
     .notes {
+        touch-action: none; 
         position: absolute;
         top: 0;
         left: 0;

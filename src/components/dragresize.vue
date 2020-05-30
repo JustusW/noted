@@ -23,7 +23,8 @@
         },
         methods: {
             style() {
-                return 'position: absolute; ' +
+                return 'touch-action: none; ' +
+                    'position: absolute; ' +
                     'left: ' + this.rect.x + 'px; ' +
                     'top: ' + this.rect.y + 'px; ' +
                     'width: ' + this.rect.w + 'px; ' +

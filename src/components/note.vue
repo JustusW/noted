@@ -110,6 +110,9 @@
         overflow-y: auto;
         height: 100%;
     }
+    .note {
+        touch-action: none;
+    }
 
     .resizable-content {
         height: 100%;
