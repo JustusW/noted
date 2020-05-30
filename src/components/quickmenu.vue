@@ -8,6 +8,7 @@
                 {name: 'save', class: 'material-icons',eventName:'qmsave'},
             ]"
             @option-clicked="handleClick"
+            v-touch:tap="handleTouch"
     />
 </template>
 
@@ -22,8 +23,8 @@
             show(ev) {
                 this.$refs.canvas_menu.showMenu(ev, this.options)
             },
-            centerClick() {
-                this.$el.dispatchEvent(new CustomEvent('closeradial', {bubbles: true, detail: this.options}))
+            handleTouch(e) {
+                e.target.click()
             },
             handleClick(item) {
                 this.$el.dispatchEvent(new CustomEvent(item.option.eventName, {bubbles: true, detail: this.options}))

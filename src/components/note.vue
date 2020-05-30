@@ -10,6 +10,7 @@
                 dark
                 height="100%"
                 width="100%"
+                v-touch:longtap="ltstop"
         >
 <!--            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>-->
             <v-card-text v-html="note.text" @dblclick.stop="dialog = true">
@@ -90,7 +91,11 @@
                 ],
             }
         },
-        methods: {},
+        methods: {
+            ltstop(e) {
+                e.stopPropagation()
+            },
+        },
         mounted() {
             this.$watch('$refs.dr.rect', function (val) {
                 this.$set(this.note, 'x', val.x - this.anchor.x)
@@ -110,7 +115,7 @@
         overflow-y: auto;
         height: 100%;
     }
-    .note {
+    .note, .note * {
         touch-action: none;
     }
 

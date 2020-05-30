@@ -72,10 +72,9 @@
                         detail: {
                             getTransform: e.getTransform,
                             getScaledTransform: function () {
-                                let r = zoom.$el.getBoundingClientRect()
-                                let rc = zoom.$el.firstElementChild.getBoundingClientRect()
-                                let rp = zoom.$el.parentNode.getBoundingClientRect()
-                                console.log(r.x, r.y, rp.x, rp.y, rc.x, rc.y)
+                                // let r = zoom.$el.getBoundingClientRect()
+                                // let rc = zoom.$el.firstElementChild.getBoundingClientRect()
+                                // let rp = zoom.$el.parentNode.getBoundingClientRect()
                             }
                         }
                     })

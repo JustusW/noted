@@ -1,7 +1,8 @@
 <template>
     <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
          @transform="ontransform"
-         @contextmenu.prevent.stop="doubleClick"
+         v-touch:longtap="longtap"
+         v-touch:tap="closemenu"
     >
         <div
                 v-on:qmadd="addnote"
@@ -34,6 +35,8 @@
                     :style="getStyle()"
                     v-on:mousedown="checkPrevention"
                     v-on:mousemove="checkPrevention"
+                    v-on:touchstart="checkPrevention"
+                    v-on:touchmove="checkPrevention"
                     v-on:dblclick.stop="doubleClick"
             >
                 <Note v-for="note in anchor.notes" v-bind:key="note.id" :note="note" :anchor="anchor"></Note>
@@ -135,11 +138,11 @@
 
                 document.body.removeChild(element);
             },
-            closeradial() {
-                this.qmshow = false
+            closemenu() {
+                this.$refs.qm.$refs.canvas_menu.hideContextMenu()
             },
             addnote() {
-                this.qmshow = false
+                this.closemenu()
                 // this.newNote(undefined, e.detail.layerX - this.anchor.x, e.detail.layerY - this.anchor.y)
                 this.newNote()
             },
@@ -173,10 +176,17 @@
                 zoom.moveTo(x, y)
             },
             ontransform(e) {
-                this.qmshow = false
+                this.closemenu()
                 let transform = e.detail.getTransform()
                 this.scaledTransform = e.detail.getScaledTransform()
                 this.$set(this.anchor, 'scale', 5 / transform.scale)
+            },
+            shorttap() {
+                this.$el.click()
+            },
+            longtap(e) {
+                let me = new MouseEvent('doubleclick', {clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY})
+                this.$refs.qm.show(me)
             },
             doubleClick(ev) {
                 this.$refs.qm.show(ev)
@@ -189,9 +199,7 @@
                 } else {
                     this.qmlayerx = this.qmx + this.scaledTransform.x
                     this.qmlayery = this.qmy + this.scaledTransform.y
-                    console.log(this.scaledTransform)
                 }
-                console.log(this.qmlayerx, this.qmlayery)
             },
             checkPrevention(ev) {
                 let elm = ev.target
@@ -210,6 +218,7 @@
                     file.text().then(t => {
                         this.$refs.dropzone.removeFile(file)
                         this.anchor = JSON.parse(t)
+                        localStorage.anchor = t
                     })
                 } else {
                     const toBase64 = file => new Promise((resolve, reject) => {
@@ -219,7 +228,6 @@
                         reader.onerror = error => reject(error);
                     });
                     toBase64(file).then(bs => {
-                        console.log(bs)
                         this.$refs.dropzone.removeFile(file)
                         this.newNote('<img src="' + bs + '" style="width: 100%; height: 100%;"/>')
                     })
