@@ -40,6 +40,11 @@
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model.number="note.z"></v-text-field>
                                 </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-btn @click="deleteNote">
+                                        <v-icon>delete</v-icon>
+                                    </v-btn>
+                                </v-col>
                             </v-row>
                             <TiptapVuetify v-model="note.text" :extensions="extensions"></TiptapVuetify>
                         </v-container>
@@ -116,6 +121,11 @@
             touch(e) {
                 this.dialog = true
                 e.stopPropagation()
+            },
+            deleteNote() {
+                this.anchor.notes = this.anchor.notes.filter(val => {
+                    return val.id !== this.note.id
+                })
             },
         },
         mounted() {

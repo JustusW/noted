@@ -278,9 +278,13 @@
                 if (y === undefined) {
                     y = 50
                 }
+                let highestId = 0
+                for (let note of this.anchor.notes) {
+                    highestId = Math.max(note.id, highestId)
+                }
                 this.anchor.notes.push({
                     text: content,
-                    id: this.anchor.notes.length,
+                    id: highestId + 1,
                     x: x, y: y, width: 200, height: 200,
                 })
             },
