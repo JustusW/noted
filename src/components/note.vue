@@ -24,33 +24,53 @@
             </v-card-text>
         </v-card>
         <v-dialog v-model="dialog">
-            <v-card>
-                <v-card-title class="headline">Edit Note</v-card-title>
-                <v-card-text>
+            <v-card style="height: 80vh; ">
+                <v-card-title class="headline">
+                    Edit Note
+                </v-card-title>
+                <v-card-text style="height: 70vh;">
                     <v-form>
-                        <v-container>
-                            <v-row>
-                                <v-col cols="12" md="4">
-                                    <v-text-field
-                                            v-model="note.name"
-                                            label="Note Name"
-                                            required
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="4">
-                                    <v-text-field v-model.number="note.z"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="4">
-                                    <v-btn @click="deleteNote">
-                                        <v-icon>delete</v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                        <v-row>
+                            <v-col cols="12" md="4">
+                                <v-text-field
+                                        v-model="note.name"
+                                        label="Note Name"
+                                        required
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="4">
+                                <v-slider
+                                        label="Note Order"
+                                        max="100" v-model.number="note.z"
+                                        min="0" thumb-label="always"
+                                ></v-slider>
+                            </v-col>
+                            <v-col cols="12" md="2">
+                                <v-btn type="button" @click.stop="selectNote">
+                                    Create Reference
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="12" md="1">
+                            </v-col>
+                            <v-col cols="12" md="1">
+                                <v-btn @click="deleteNote" dark class="dangerous" color="red">
+                                    <v-icon>delete</v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                        <div class="overflow-y-auto" style="max-height: 50vh; position: relative; margin-top: 50px; ">
                             <TiptapVuetify v-model="note.text" :extensions="extensions"></TiptapVuetify>
-                        </v-container>
+                        </div>
                     </v-form>
                 </v-card-text>
             </v-card>
+            <div class="noteLinkMenu"></div>
+            <vue-simple-context-menu
+                    :element-id="'note_ref_menu' + note.id"
+                    ref="note_ref_menu"
+                    :options="notes"
+                    @option-clicked="handleClick"
+            ></vue-simple-context-menu>
         </v-dialog>
     </dragResize>
 </template>
@@ -91,7 +111,13 @@
             if (this.note.z === undefined) {
                 this.$set(this.note, 'z', 0)
             }
+            let notes = []
+            for (let note of this.anchor.notes) {
+                notes.push({name: (!note.name ? note.id : note.name + ' (' + note.id + ')'), note: note})
+            }
             return {
+                clipboardMessage: "",
+                notes,
                 dialog: false,
                 extensions: [
                     Image,
@@ -118,6 +144,10 @@
             }
         },
         methods: {
+            handleClick(item) {
+                let link = '<a href="#/notes/' + item.option.note.id + '">' + item.option.name + '</a>'
+                this.$set(this.note, 'text', link + '<br>' + this.note.text)
+            },
             touch(e) {
                 this.dialog = true
                 e.stopPropagation()
@@ -127,6 +157,9 @@
                     return val.id !== this.note.id
                 })
             },
+            selectNote(e) {
+                this.$refs.note_ref_menu.showMenu(e)
+            }
         },
         mounted() {
             this.$watch('$refs.dr.rect', function (val) {
@@ -142,8 +175,8 @@
     }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+
+<style>
     .scroll-y {
         overflow-y: auto;
         height: 100%;
@@ -153,9 +186,15 @@
         touch-action: none;
     }
 
-    .resizable-content {
-        height: 100%;
-        width: 100%;
-        background-color: aqua;
+    .tiptap-vuetify-editor__toolbar {
+        position: fixed;
+        margin-top: -50px;
+    }
+
+    .noteLinkMenu + div {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
     }
 </style>
