@@ -20,8 +20,8 @@
         <v-dialog v-model="dialog">
             <v-card>
                 <v-card-title class="headline">Edit Note</v-card-title>
-
                 <v-card-text>
+
                     <TiptapVuetify v-model="note.text" :extensions="extensions"></TiptapVuetify>
                 </v-card-text>
             </v-card>
@@ -33,6 +33,7 @@
     import {
         TiptapVuetify,
         Heading,
+        Image,
         Bold,
         Italic,
         Strike,
@@ -70,6 +71,7 @@
                 },
                 dialog: false,
                 extensions: [
+                    Image,
                     History,
                     Blockquote,
                     Link,
