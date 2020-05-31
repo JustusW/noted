@@ -23,12 +23,14 @@
         },
         methods: {
             style() {
-                return 'touch-action: none; ' +
-                    'position: absolute; ' +
-                    'left: ' + this.rect.x + 'px; ' +
-                    'top: ' + this.rect.y + 'px; ' +
-                    'width: ' + this.rect.w + 'px; ' +
-                    'height: ' + this.rect.h + 'px; '
+                return ['touch-action: none',
+                    'position: absolute',
+                    'z-index: ' + this.rect.z,
+                    'left: ' + this.rect.x + 'px',
+                    'top: ' + this.rect.y + 'px',
+                    'width: ' + this.rect.w + 'px',
+                    'height: ' + this.rect.h + 'px',
+                '',].join('; ')
             },
             resize(e) {
                 let event = e.detail
@@ -44,6 +46,9 @@
             }
         },
         mounted() {
+            this.$watch('box.z', function (v) {
+                this.rect.z = v
+            })
             this.$watch('box.x', function (v) {
                 this.rect.x = v
             })

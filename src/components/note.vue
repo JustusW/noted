@@ -1,6 +1,12 @@
 <template>
     <dragResize
-            :box="{x: this.note.x + this.anchor.x, y: this.note.y + this.anchor.y, w: this.note.width, h: this.note.height}"
+            :box="{
+                x: this.note.x + this.anchor.x,
+                y: this.note.y + this.anchor.y,
+                w: this.note.width,
+                h: this.note.height,
+                z: this.note.z,
+            }"
             :scale="anchor.scale"
             ref="dr">
         <v-card
@@ -13,7 +19,7 @@
                 v-touch:touchhold="touch"
                 @dblclick.stop="dialog = true"
         >
-<!--            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>-->
+            <!--            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>-->
             <v-card-text v-html="note.text">
             </v-card-text>
         </v-card>
@@ -21,8 +27,23 @@
             <v-card>
                 <v-card-title class="headline">Edit Note</v-card-title>
                 <v-card-text>
-
-                    <TiptapVuetify v-model="note.text" :extensions="extensions"></TiptapVuetify>
+                    <v-form>
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field
+                                            v-model="note.name"
+                                            label="Note Name"
+                                            required
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model.number="note.z"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <TiptapVuetify v-model="note.text" :extensions="extensions"></TiptapVuetify>
+                        </v-container>
+                    </v-form>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -62,13 +83,10 @@
             dragResize
         },
         data() {
+            if (this.note.z === undefined) {
+                this.$set(this.note, 'z', 0)
+            }
             return {
-                box: {
-                    x: this.note.x + this.anchor.x,
-                    y: this.note.y + this.anchor.y,
-                    w: this.note.width,
-                    h: this.note.height,
-                },
                 dialog: false,
                 extensions: [
                     Image,
@@ -106,6 +124,7 @@
                 this.$set(this.note, 'y', val.y - this.anchor.y)
                 this.$set(this.note, 'width', val.w)
                 this.$set(this.note, 'height', val.h)
+                this.$set(this.note, 'z', val.z)
             }, {
                 deep: true
             })
@@ -119,6 +138,7 @@
         overflow-y: auto;
         height: 100%;
     }
+
     .note, .note * {
         touch-action: none;
     }
