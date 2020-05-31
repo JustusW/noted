@@ -10,10 +10,11 @@
                 dark
                 height="100%"
                 width="100%"
-                v-touch:longtap="ltstop"
+                v-touch:touchhold="touch"
+                @dblclick.stop="dialog = true"
         >
 <!--            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>-->
-            <v-card-text v-html="note.text" @dblclick.stop="dialog = true">
+            <v-card-text v-html="note.text">
             </v-card-text>
         </v-card>
         <v-dialog v-model="dialog">
@@ -92,7 +93,8 @@
             }
         },
         methods: {
-            ltstop(e) {
+            touch(e) {
+                this.dialog = true
                 e.stopPropagation()
             },
         },

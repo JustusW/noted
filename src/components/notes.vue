@@ -1,9 +1,10 @@
 <template>
     <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
          @transform="ontransform"
-         v-touch:longtap="longtap"
+         v-touch:touchhold.stop.prevent="longtap"
          v-touch:tap="closemenu"
     >
+
         <div
                 v-on:qmadd="addnote"
                 v-on:qmhome="center"
@@ -46,6 +47,7 @@
         <vue-dropzone
                 ref="dropzone" id="dropzone" :options="dropzoneOptions"
                 style="position: fixed; top: 64px; left: 64px; max-height: 50px; "
+                v-touch:tap="touchToClick"
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
     </div>
 </template>
@@ -125,6 +127,9 @@
             },
         },
         methods: {
+            touchToClick(ev) {
+                ev.target.click()
+            },
             save() {
                 let data = JSON.stringify(this.anchor)
                 let element = document.createElement('a');
@@ -137,9 +142,6 @@
                 element.click();
 
                 document.body.removeChild(element);
-            },
-            closemenu() {
-                this.$refs.qm.$refs.canvas_menu.hideContextMenu()
             },
             addnote() {
                 this.closemenu()
@@ -181,10 +183,12 @@
                 this.scaledTransform = e.detail.getScaledTransform()
                 this.$set(this.anchor, 'scale', 5 / transform.scale)
             },
-            shorttap() {
-                this.$el.click()
+            closemenu() {
+                if (Date.now() - this.lastLongTap > 500)
+                    this.$refs.qm.$refs.canvas_menu.hideContextMenu()
             },
             longtap(e) {
+                this.lastLongTap = Date.now()
                 let me = new MouseEvent('doubleclick', {clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY})
                 this.$refs.qm.show(me)
             },

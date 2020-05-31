@@ -8,11 +8,13 @@
                 {name: 'save', class: 'material-icons',eventName:'qmsave'},
             ]"
             @option-clicked="handleClick"
-            v-touch:tap="handleTouch"
+            v-touch:tap.stop.prevent="touch"
     />
 </template>
 
 <script>
+    import _ from 'lodash'
+
     export default {
         name: "quickmenu",
         components: {},
@@ -23,12 +25,12 @@
             show(ev) {
                 this.$refs.canvas_menu.showMenu(ev, this.options)
             },
-            handleTouch(e) {
-                e.target.click()
+            touch(ev) {
+                ev.target.click()
             },
-            handleClick(item) {
+            handleClick: _.debounce(function (item) {
                 this.$el.dispatchEvent(new CustomEvent(item.option.eventName, {bubbles: true, detail: this.options}))
-            },
+            }, 100),
             style() {
                 let height, width
                 try {

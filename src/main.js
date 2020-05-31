@@ -16,7 +16,8 @@ import router from './routes'
 import Vue2TouchEvents from 'vue2-touch-events'
 
 Vue.use(Vuetify)
-Vue.use(Vue2TouchEvents)
+Vue.use(Vue2TouchEvents, {
+})
 Vue.use(VueRouter)
 Vue.config.productionTip = false
 let vuetify = new Vuetify({
