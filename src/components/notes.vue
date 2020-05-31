@@ -1,6 +1,6 @@
 <template>
     <div :style='[
-            "background-color: " + bgcolor,
+            "background-color: " + anchor.bgcolor,
             "position: fixed",
             "top: 0",
             "left: 0",
@@ -62,7 +62,7 @@
                 v-touch:tap="touchToClick"
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
         <v-dialog v-model="settingsDialog">
-            <Settings v-model="bgcolor"></Settings>
+            <Settings v-model="anchor.bgcolor"></Settings>
         </v-dialog>
     </div>
 </template>
@@ -81,6 +81,7 @@
 
     if (!localStorage.anchor) {
         localStorage.anchor = JSON.stringify({
+            bgcolor: '#fff',
             notes: [
                 {
                     id: 0,
@@ -112,7 +113,6 @@
         data: function () {
             return {
                 settingsDialog: false,
-                bgcolor: '#fff',
                 scaledTransform: {x: 0, y: 0, scale: 1},
                 anchor,
                 dropzoneOptions: {
@@ -137,6 +137,11 @@
             this.$nextTick(function () {
                 this.checkRoute()
             })
+            if (this.anchor.bgcolor === undefined) {
+                console.log('setting anchor.bgcolor')
+                this.anchor.bgcolor = "#fff"
+                localStorage.anchor = JSON.stringify(this.anchor)
+            }
         },
         watch: {
             $route() {
