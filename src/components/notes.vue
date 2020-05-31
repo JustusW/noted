@@ -1,11 +1,23 @@
 <template>
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden;"
+    <div :style='[
+            "background-color: " + bgcolor,
+            "position: fixed",
+            "top: 0",
+            "left: 0",
+            "width: 100%",
+            "height: 100%",
+            "max-width: 100%",
+            "max-height: 100%",
+            "overflow: hidden",
+        "",].join("; ")'
          @transform="ontransform"
          v-touch:touchhold.stop.prevent="longtap"
          v-touch:tap="closemenu"
+         v-on:click="closemenu"
     >
 
         <div
+                v-on:qmsettings="settings"
                 v-on:qmadd="addnote"
                 v-on:qmhome="center"
                 v-on:qmsave="save"
@@ -49,6 +61,9 @@
                 style="position: fixed; top: 64px; left: 64px; max-height: 50px; "
                 v-touch:tap="touchToClick"
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
+        <v-dialog v-model="settingsDialog">
+            <Settings v-model="bgcolor"></Settings>
+        </v-dialog>
     </div>
 </template>
 
@@ -56,6 +71,7 @@
     import Note from './note'
     import Anchor from './anchor'
     import Zoom from './zoom'
+    import Settings from './settings'
     import QuickMenu from './quickmenu'
     import vue2Dropzone from 'vue2-dropzone'
     import _ from 'lodash'
@@ -86,6 +102,7 @@
             title: String
         },
         components: {
+            Settings,
             Note,
             Anchor,
             Zoom,
@@ -94,6 +111,8 @@
         },
         data: function () {
             return {
+                settingsDialog: false,
+                bgcolor: '#fff',
                 scaledTransform: {x: 0, y: 0, scale: 1},
                 anchor,
                 dropzoneOptions: {
@@ -143,6 +162,9 @@
 
                 document.body.removeChild(element);
             },
+            settings() {
+                this.settingsDialog = true
+            },
             addnote() {
                 this.closemenu()
                 // this.newNote(undefined, e.detail.layerX - this.anchor.x, e.detail.layerY - this.anchor.y)
@@ -189,7 +211,10 @@
             },
             longtap(e) {
                 this.lastLongTap = Date.now()
-                let me = new MouseEvent('doubleclick', {clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY})
+                let me = new MouseEvent('doubleclick', {
+                    clientX: e.changedTouches[0].clientX,
+                    clientY: e.changedTouches[0].clientY
+                })
                 this.$refs.qm.show(me)
             },
             doubleClick(ev) {

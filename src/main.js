@@ -17,6 +17,7 @@ import Vue2TouchEvents from 'vue2-touch-events'
 
 Vue.use(Vuetify)
 Vue.use(Vue2TouchEvents, {
+    disableClick: true
 })
 Vue.use(VueRouter)
 Vue.config.productionTip = false

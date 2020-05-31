@@ -6,6 +6,7 @@
                 {name: 'add', class: 'material-icons',eventName:'qmadd'},
                 {name: 'home', class: 'material-icons',eventName:'qmhome'},
                 {name: 'save', class: 'material-icons',eventName:'qmsave'},
+                {name: 'settings', class: 'material-icons',eventName:'qmsettings'},
             ]"
             @option-clicked="handleClick"
             v-touch:tap.stop.prevent="touch"
