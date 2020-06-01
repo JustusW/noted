@@ -1,17 +1,5 @@
 <template>
-    <dragResize
-            :box="{
-                x: this.note.x + this.anchor.x,
-                y: this.note.y + this.anchor.y,
-                w: this.note.width,
-                h: this.note.height,
-                z: this.note.z,
-                locked: this.note.locked,
-                grid: this.note.grid,
-                anchorGrid: this.anchor.grid,
-            }"
-            :scale="anchor.scale"
-            ref="dr">
+    <div style="height: 100%; width: 100%;">
         <v-card
                 class="note mx-auto scroll-y"
                 outlined
@@ -79,7 +67,7 @@
                     @option-clicked="handleClick"
             ></vue-simple-context-menu>
         </v-dialog>
-    </dragResize>
+    </div>
 </template>
 
 <script>
@@ -102,17 +90,16 @@
         HorizontalRule,
         History
     } from 'tiptap-vuetify'
-    import dragResize from './dragresize'
 
     export default {
         name: 'note',
         props: {
             note: Object,
             anchor: Object,
+            container: Object,
         },
         components: {
             TiptapVuetify,
-            dragResize
         },
         data() {
             if (this.note.z === undefined) {
@@ -167,17 +154,6 @@
             selectNote(e) {
                 this.$refs.note_ref_menu.showMenu(e)
             }
-        },
-        mounted() {
-            this.$watch('$refs.dr.rect', function (val) {
-                this.$set(this.note, 'x', val.x - this.anchor.x)
-                this.$set(this.note, 'y', val.y - this.anchor.y)
-                this.$set(this.note, 'width', val.w)
-                this.$set(this.note, 'height', val.h)
-                this.$set(this.note, 'z', val.z)
-            }, {
-                deep: true
-            })
         },
     }
 </script>

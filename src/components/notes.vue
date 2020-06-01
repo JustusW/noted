@@ -18,7 +18,8 @@
 
         <div
                 v-on:qmsettings="settings"
-                v-on:qmadd="addnote"
+                v-on:qmaddnote="addnote"
+                v-on:qmaddcontainer="addcontainer"
                 v-on:qmhome="center"
                 v-on:qmsave="save"
         >
@@ -52,7 +53,20 @@
                     v-on:touchmove="checkPrevention"
                     v-on:dblclick.stop="doubleClick"
             >
-                <Note v-for="note in anchor.notes" v-bind:key="note.id" :note="note" :anchor="anchor"></Note>
+                <div v-for="container in anchor.container"
+                     v-bind:key="container.id"
+                     v-on:dropped.stop="droppedContainer($event, container)">
+                    <Container :container="container"
+                               :anchor="anchor"></Container>
+                </div>
+                <div
+                        v-for="note in anchor.notes"
+                        v-bind:key="note.id"
+                        v-on:dropped.stop="droppedNote($event, note)">
+                    <Note
+                            :note="note"
+                            :anchor="anchor"></Note>
+                </div>
                 <Anchor :anchor="anchor"></Anchor>
             </div>
         </Zoom>
@@ -68,11 +82,12 @@
 </template>
 
 <script>
-    import Note from './note'
+    import Note from './draggablenote'
     import Anchor from './anchor'
     import Zoom from './zoom'
     import Settings from './settings'
     import QuickMenu from './quickmenu'
+    import Container from './container'
     import vue2Dropzone from 'vue2-dropzone'
     import _ from 'lodash'
 
@@ -92,6 +107,7 @@
             ],
             scale: 1,
             grid: false,
+            container: [],
         })
     }
 
@@ -103,6 +119,7 @@
             title: String
         },
         components: {
+            Container,
             Settings,
             Note,
             Anchor,
@@ -112,6 +129,7 @@
         },
         data: function () {
             return {
+                dropped: {},
                 settingsDialog: false,
                 scaledTransform: {x: 0, y: 0, scale: 1},
                 anchor,
@@ -145,6 +163,19 @@
             })
         },
         watch: {
+            dropped: {
+                deep: true,
+                handler: function (v) {
+                    if (v.note && v.container) {
+                        v.container.notes.push(v.note)
+                        this.anchor.notes = this.anchor.notes.filter(n => {
+                            return n.id !== v.note.id
+                        })
+                        this.$set(this.dropped, 'container', undefined)
+                        this.$set(this.dropped, 'note', undefined)
+                    }
+                }
+            },
             $route() {
                 this.$nextTick(function () {
                     this.checkRoute()
@@ -152,6 +183,12 @@
             },
         },
         methods: {
+            droppedNote(e, note) {
+                this.$set(this.dropped, 'note', note)
+            },
+            droppedContainer(e, container) {
+                this.$set(this.dropped, 'container', container)
+            },
             touchToClick(ev) {
                 ev.target.click()
             },
@@ -170,6 +207,10 @@
             },
             settings() {
                 this.settingsDialog = true
+            },
+            addcontainer() {
+                this.closemenu()
+                this.newContainer()
             },
             addnote() {
                 this.closemenu()
@@ -238,7 +279,7 @@
             },
             checkPrevention(ev) {
                 let elm = ev.target
-                let parent = elm.closest('.note, .anchor')
+                let parent = elm.closest('.note, .anchor, .noteContainer')
                 if (parent) {
                     ev.preventDefault()
                     ev.stopImmediatePropagation()
@@ -269,6 +310,29 @@
 
                 }
             },
+            newContainer(content, x, y) {
+                if (this.anchor.container === undefined || !Array.isArray(this.anchor.container)) {
+                    this.$set(this.anchor, 'container', [])
+                }
+                if (content === undefined) {
+                    content = []
+                }
+                if (x === undefined) {
+                    x = 50
+                }
+                if (y === undefined) {
+                    y = 50
+                }
+                let highestId = 0
+                for (let container of this.anchor.container) {
+                    highestId = Math.max(parseInt(container.id), highestId)
+                }
+                this.anchor.container.push({
+                    notes: content,
+                    id: 'container' + (highestId + 1),
+                    x: x, y: y, width: 200, height: 200,
+                })
+            },
             newNote(content, x, y) {
                 if (!content) {
                     content = '<h1>Change me!</h1>'
@@ -281,11 +345,11 @@
                 }
                 let highestId = 0
                 for (let note of this.anchor.notes) {
-                    highestId = Math.max(note.id, highestId)
+                    highestId = Math.max(parseInt(note.id), highestId)
                 }
                 this.anchor.notes.push({
                     text: content,
-                    id: highestId + 1,
+                    id: 'note' + (highestId + 1),
                     x: x, y: y, width: 200, height: 200,
                 })
             },

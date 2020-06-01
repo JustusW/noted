@@ -15,6 +15,7 @@
         props: {
             box: Object,
             scale: Number,
+            drop: Boolean,
         },
         data() {
             return {
@@ -45,12 +46,39 @@
                 this.rect.y += event.dy * (this.scale || 1)
             },
             setInteract(reset) {
+                this.i = interact(this.$el)
+
                 if (this.rect.locked || reset) {
-                    interact(this.$el).unset()
+                    this.i.unset()
                     if (!reset) {
                         return
                     }
                 }
+
+                if (this.drop === true) {
+                    this.i.dropzone({
+                        overlap: 0.75,
+                        ondropactivate: function (event) {
+                            event.target.classList.add('drop-active')
+                        },
+                        ondropdeactivate: function (event) {
+                            event.target.classList.remove('drop-active')
+                            event.target.classList.remove('drop-target')
+                        },
+                        ondragenter: function (event) {
+                            event.target.classList.add('drop-target')
+                        },
+                        ondragleave: function (event) {
+                            event.target.classList.remove('drop-target')
+                        },
+                        ondrop: function (event) {
+                            let ev = new Event('dropped', {bubbles: true})
+                            event.relatedTarget.dispatchEvent(ev)
+                            event.target.dispatchEvent(ev)
+                        },
+                    })
+                }
+
                 let dr = this
                 let modifiers = []
                 if (this.rect.grid || this.rect.anchorGrid) {
@@ -64,23 +92,25 @@
                         }),
                     ]
                 }
-                this.i = interact(this.$el)
-                    .resizable({
-                        edges: {left: true, right: true, bottom: true, top: true},
-                        listeners: {
-                            move(e) {
-                                dr.$el.dispatchEvent(new CustomEvent('resize', {detail: e}))
-                            }
-                        },
-                    }).draggable({
-                        listeners: {
-                            move(e) {
-                                dr.$el.dispatchEvent(new CustomEvent('move', {detail: e}))
-                            }
-                        },
-                        modifiers: modifiers,
-                    })
+                this.i.resizable({
+                    edges: {left: true, right: true, bottom: true, top: true},
+                    listeners: {
+                        move(e) {
+                            dr.$el.dispatchEvent(new CustomEvent('resize', {detail: e}))
+                        }
+                    },
+                }).draggable({
+                    listeners: {
+                        move(e) {
+                            dr.$el.dispatchEvent(new CustomEvent('move', {detail: e}))
+                        }
+                    },
+                    modifiers: modifiers,
+                })
             },
+        },
+        destroyed() {
+            this.i.unset()
         },
         mounted() {
             this.$watch('box.x', function (v) {

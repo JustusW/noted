@@ -3,7 +3,8 @@
             element-id="canvas_menu"
             ref="canvas_menu"
             :options="[
-                {name: 'add', class: 'material-icons',eventName:'qmadd'},
+                {name: 'post_add', class: 'material-icons',eventName:'qmaddnote'},
+                {name: 'add_to_queue', class: 'material-icons',eventName:'qmaddcontainer'},
                 {name: 'home', class: 'material-icons',eventName:'qmhome'},
                 {name: 'save', class: 'material-icons',eventName:'qmsave'},
                 {name: 'settings', class: 'material-icons',eventName:'qmsettings'},
