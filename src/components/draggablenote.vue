@@ -1,14 +1,14 @@
 <template>
     <dragResize
             :box="{
-                x: this.note.x + this.anchor.x,
-                y: this.note.y + this.anchor.y,
-                w: this.note.width,
-                h: this.note.height,
-                z: this.note.z,
-                locked: this.note.locked,
-                grid: this.note.grid,
-                anchorGrid: this.anchor.grid,
+                x: note.x + anchor.x,
+                y: note.y + anchor.y,
+                w: note.width,
+                h: note.height,
+                z: note.z,
+                locked: note.locked,
+                grid: note.grid,
+                anchorGrid: anchor.grid,
             }"
             :scale="anchor.scale"
             ref="dr">

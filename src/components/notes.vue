@@ -231,17 +231,27 @@
                 if (this.$route.params.id !== undefined) {
                     reset = true
                     this.$refs.zoom.shouldReset = false
-                    this.jumpTo(parseInt(this.$route.params.id))
+                    this.jumpTo(this.$route.params.id)
                 }
                 if (reset) {
                     this.$router.push('/notes')
                 }
             },
             jumpTo(id) {
+                function fn(val) {
+                    return val.id === id
+                }
                 let zoom = this.$refs.zoom
-                let note = this.anchor.notes.find(val => {
-                    return val.id === parseInt(id)
-                })
+                let note = this.anchor.notes.find(fn)
+                if (!note) {
+                    for (let container of this.anchor.container) {
+                        note = container.notes.find(fn)
+                        if (note) {
+                            note = container
+                            break
+                        }
+                    }
+                }
                 if (!note) {
                     return
                 }
