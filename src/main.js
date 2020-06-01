@@ -28,7 +28,7 @@ let vuetify = new Vuetify({
 })
 
 Vue.component('vue-simple-context-menu', VueSimpleContextMenu)
-
+Vue.debug = true
 new Vue({
     render: h => h(App),
     vuetify,

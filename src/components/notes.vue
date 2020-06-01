@@ -75,7 +75,7 @@
                 style="position: fixed; top: 64px; left: 64px; max-height: 50px; "
                 v-touch:tap="touchToClick"
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
-        <v-dialog v-model="settingsDialog">
+        <v-dialog v-model="settingsDialog" width="500">
             <Settings v-model="anchor"></Settings>
         </v-dialog>
     </div>
@@ -167,6 +167,10 @@
                 deep: true,
                 handler: function (v) {
                     if (v.note && v.container) {
+                        v.note.x = 0
+                        v.note.y = 0
+                        v.note.width = 1
+                        v.note.height = 1
                         v.container.notes.push(v.note)
                         this.anchor.notes = this.anchor.notes.filter(n => {
                             return n.id !== v.note.id
@@ -279,7 +283,7 @@
             },
             checkPrevention(ev) {
                 let elm = ev.target
-                let parent = elm.closest('.note, .anchor, .noteContainer')
+                let parent = elm.closest('.note, .anchor, .noteContainer, .noteContainerHandle')
                 if (parent) {
                     ev.preventDefault()
                     ev.stopImmediatePropagation()
@@ -325,7 +329,9 @@
                 }
                 let highestId = 0
                 for (let container of this.anchor.container) {
-                    highestId = Math.max(parseInt(container.id), highestId)
+                    let id = parseInt(container.id.replace ( /[^\d.]/g, '' ))
+                    if (!isNaN(id))
+                        highestId = Math.max(id, highestId)
                 }
                 this.anchor.container.push({
                     notes: content,
@@ -345,7 +351,18 @@
                 }
                 let highestId = 0
                 for (let note of this.anchor.notes) {
-                    highestId = Math.max(parseInt(note.id), highestId)
+                    let id = parseInt(note.id.replace ( /[^\d.]/g, '' ))
+                    if (!isNaN(id)) {
+                        highestId = Math.max(id, highestId)
+                    }
+                }
+                for (let container of this.anchor.container) {
+                    for (let note of container.notes) {
+                        let id = parseInt(note.id.replace ( /[^\d.]/g, '' ))
+                        if (!isNaN(id)) {
+                            highestId = Math.max(id, highestId)
+                        }
+                    }
                 }
                 this.anchor.notes.push({
                     text: content,

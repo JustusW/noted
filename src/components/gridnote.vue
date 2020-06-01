@@ -1,7 +1,5 @@
 <template>
-    <div>
         <Note :note="note" :anchor="anchor"></Note>
-    </div>
 </template>
 
 <script>
@@ -15,7 +13,7 @@
             container: Object,
         },
         components: {
-            Note
+                Note,
         },
     }
 </script>
