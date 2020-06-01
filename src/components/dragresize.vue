@@ -30,7 +30,7 @@
                     'top: ' + this.rect.y + 'px',
                     'width: ' + this.rect.w + 'px',
                     'height: ' + this.rect.h + 'px',
-                '',].join('; ')
+                    '',].join('; ')
             },
             resize(e) {
                 let event = e.detail
@@ -43,34 +43,44 @@
                 let event = e.detail
                 this.rect.x += event.dx * (this.scale || 1)
                 this.rect.y += event.dy * (this.scale || 1)
-            }
+            },
+            setInteract() {
+                if (this.rect.locked) {
+                    return interact(this.$el).unset()
+                }
+                let dr = this
+                this.i = interact(this.$el)
+                    .resizable({
+                        edges: {left: true, right: true, bottom: true, top: true},
+                        listeners: {
+                            move(e) {
+                                dr.$el.dispatchEvent(new CustomEvent('resize', {detail: e}))
+                            }
+                        },
+                    }).draggable({
+                        listeners: {
+                            move(e) {
+                                dr.$el.dispatchEvent(new CustomEvent('move', {detail: e}))
+                            }
+                        },
+                    })
+            },
         },
         mounted() {
-            this.$watch('box.z', function (v) {
-                this.rect.z = v
-            })
             this.$watch('box.x', function (v) {
                 this.rect.x = v
             })
             this.$watch('box.y', function (v) {
                 this.rect.y = v
             })
-            let dr = this
-            this.i = interact(this.$el)
-                .resizable({
-                    edges: { left: true, right: true, bottom: true, top: true },
-                    listeners: {
-                        move(e) {
-                            dr.$el.dispatchEvent(new CustomEvent('resize', {detail: e}))
-                        }
-                    },
-                }).draggable({
-                    listeners: {
-                        move(e) {
-                            dr.$el.dispatchEvent(new CustomEvent('move', {detail: e}))
-                        }
-                    },
-                })
+            this.$watch('box.z', function (v) {
+                this.rect.z = v
+            })
+            this.setInteract()
+            this.$watch('box.locked', function (v) {
+                this.rect.locked = v
+                this.setInteract()
+            })
         }
     }
 </script>

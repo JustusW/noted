@@ -6,6 +6,7 @@
                 w: this.note.width,
                 h: this.note.height,
                 z: this.note.z,
+                locked: this.note.locked,
             }"
             :scale="anchor.scale"
             ref="dr">
@@ -45,12 +46,13 @@
                                         min="0" thumb-label="always"
                                 ></v-slider>
                             </v-col>
+                            <v-col cols="12" md="1">
+                                <v-checkbox label="Lock" v-model="note.locked"></v-checkbox>
+                            </v-col>
                             <v-col cols="12" md="2">
                                 <v-btn type="button" @click.stop="selectNote">
                                     Create Reference
                                 </v-btn>
-                            </v-col>
-                            <v-col cols="12" md="1">
                             </v-col>
                             <v-col cols="12" md="1">
                                 <v-btn @click="deleteNote" dark class="dangerous" color="red">
