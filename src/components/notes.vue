@@ -62,7 +62,7 @@
                 v-touch:tap="touchToClick"
                 v-on:vdropzone-file-added="fileAdded"></vue-dropzone>
         <v-dialog v-model="settingsDialog">
-            <Settings v-model="anchor.bgcolor"></Settings>
+            <Settings v-model="anchor"></Settings>
         </v-dialog>
     </div>
 </template>
@@ -91,7 +91,7 @@
                 }
             ],
             scale: 1,
-            grid: [10, 10],
+            grid: false,
         })
     }
 
@@ -135,13 +135,14 @@
                 localStorage.anchor = JSON.stringify(this.anchor)
             }, 500), {deep: true})
             this.$nextTick(function () {
+                if (this.anchor.grid !== false && this.anchor.grid !== true) {
+                    this.anchor.grid = false
+                }
+                if (this.anchor.bgcolor === undefined) {
+                    this.anchor.bgcolor = "#fff"
+                }
                 this.checkRoute()
             })
-            if (this.anchor.bgcolor === undefined) {
-                console.log('setting anchor.bgcolor')
-                this.anchor.bgcolor = "#fff"
-                localStorage.anchor = JSON.stringify(this.anchor)
-            }
         },
         watch: {
             $route() {

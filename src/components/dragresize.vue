@@ -44,11 +44,26 @@
                 this.rect.x += event.dx * (this.scale || 1)
                 this.rect.y += event.dy * (this.scale || 1)
             },
-            setInteract() {
-                if (this.rect.locked) {
-                    return interact(this.$el).unset()
+            setInteract(reset) {
+                if (this.rect.locked || reset) {
+                    interact(this.$el).unset()
+                    if (!reset) {
+                        return
+                    }
                 }
                 let dr = this
+                let modifiers = []
+                if (this.rect.grid || this.rect.anchorGrid) {
+                    modifiers = [
+                        interact.modifiers.snap({
+                            targets: [
+                                interact.createSnapGrid({x: 100, y: 100})
+                            ],
+                            range: Infinity,
+                            relativePoints: [{x: 0, y: 0}]
+                        }),
+                    ]
+                }
                 this.i = interact(this.$el)
                     .resizable({
                         edges: {left: true, right: true, bottom: true, top: true},
@@ -63,6 +78,7 @@
                                 dr.$el.dispatchEvent(new CustomEvent('move', {detail: e}))
                             }
                         },
+                        modifiers: modifiers,
                     })
             },
         },
@@ -80,6 +96,16 @@
             this.$watch('box.locked', function (v) {
                 this.rect.locked = v
                 this.setInteract()
+            })
+            this.$watch('box.grid', function (v) {
+                console.log('box.grid', v)
+                this.rect.grid = v
+                this.setInteract(true)
+            })
+            this.$watch('box.anchorGrid', function (v) {
+                console.log('box.anchorGrid', v)
+                this.rect.anchorGrid = v
+                this.setInteract(true)
             })
         }
     }

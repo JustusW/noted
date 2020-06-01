@@ -7,6 +7,8 @@
                 h: this.note.height,
                 z: this.note.z,
                 locked: this.note.locked,
+                grid: this.note.grid,
+                anchorGrid: this.anchor.grid,
             }"
             :scale="anchor.scale"
             ref="dr">
@@ -39,7 +41,7 @@
                                         required
                                 ></v-text-field>
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="3">
                                 <v-slider
                                         label="Note Order"
                                         max="100" v-model.number="note.z"
@@ -48,6 +50,9 @@
                             </v-col>
                             <v-col cols="12" md="1">
                                 <v-checkbox label="Lock" v-model="note.locked"></v-checkbox>
+                            </v-col>
+                            <v-col cols="12" md="1">
+                                <v-checkbox label="Grid" v-model="note.grid"></v-checkbox>
                             </v-col>
                             <v-col cols="12" md="2">
                                 <v-btn type="button" @click.stop="selectNote">
