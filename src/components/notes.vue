@@ -239,7 +239,7 @@
             },
             jumpTo(id) {
                 function fn(val) {
-                    return val.id === id
+                    return val.id === id || val.id === parseInt(id)
                 }
                 let zoom = this.$refs.zoom
                 let note = this.anchor.notes.find(fn)
@@ -304,7 +304,7 @@
                     + 'height: ' + 5 * clientHeight + 'px; '
             },
             fileAdded(file) {
-                if (file.name === 'noted.json') {
+                if (file.name.endsWith('.json')) {
                     file.text().then(t => {
                         this.$refs.dropzone.removeFile(file)
                         this.anchor = JSON.parse(t)

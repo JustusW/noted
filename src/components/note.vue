@@ -105,8 +105,13 @@
             if (this.note.z === undefined) {
                 this.$set(this.note, 'z', 0)
             }
+
+            let allnotes = this.anchor.notes
+            for (let container of this.anchor.container) {
+                allnotes = allnotes.concat(container.notes)
+            }
             let notes = []
-            for (let note of this.anchor.notes) {
+            for (let note of allnotes) {
                 notes.push({name: (!note.name ? note.id : note.name + ' (' + note.id + ')'), note: note})
             }
             return {
