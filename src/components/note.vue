@@ -1,95 +1,72 @@
 <template>
-    <div style="height: 100%; width: 100%;">
-        <v-card
-                class="note mx-auto scroll-y"
-                outlined
-                shaped
-                dark
-                height="100%"
-                width="100%"
-                v-touch:touchhold="touch"
-                @dblclick.stop="dialog = true"
-        >
-            <!--            <v-card-title>{{note.x}}/{{note.y}} {{note.width}}:{{note.height}}</v-card-title>-->
-            <v-card-text v-html="note.text">
-            </v-card-text>
-        </v-card>
-        <v-dialog v-model="dialog">
-            <v-card style="height: 80vh; ">
+    <v-card
+            class="note mx-auto scroll-y"
+            outlined
+            shaped
+            dark
+            height="100%"
+            width="100%"
+            @wheel.stop=""
+    >
+        <v-toolbar absolute dense collapse>
+            <v-menu
+                    offset-y
+                    top
+                    dark
+                    origin="center center"
+                    transition="scale-transition">
+                <template v-slot:activator="{ on }">
+                    <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
+                </template>
+                <v-list>
+                    <v-list-item link @click="dialog = true">
+                        <v-list-item-icon class="material-icons">settings</v-list-item-icon>
+                        <v-list-item-content>
+                            Settings
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+            <v-btn icon class="material-icons" v-model="note.editing" @click="toggleEditing">
+                edit
+            </v-btn>
+        </v-toolbar>
+        <v-card-text class="static" v-if="!note.editing" v-html="note.text">
+        </v-card-text>
+        <v-card-text v-if="note.editing">
+            <ckeditor v-model="note.text" :editor="editor" :config="{}"></ckeditor>
+        </v-card-text>
+        <v-dialog v-model="dialog" width="300">
+            <v-card>
                 <v-card-title class="headline">
                     Edit Note
                 </v-card-title>
-                <v-card-text style="height: 70vh;">
-                    <v-form>
-                        <v-row>
-                            <v-col cols="12" md="4">
-                                <v-text-field
-                                        v-model="note.name"
-                                        label="Note Name"
-                                        required
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" md="3">
-                                <v-slider
-                                        label="Note Order"
-                                        max="100" v-model.number="note.z"
-                                        min="0" thumb-label="always"
-                                ></v-slider>
-                            </v-col>
-                            <v-col cols="12" md="1">
-                                <v-checkbox label="Lock" v-model="note.locked"></v-checkbox>
-                            </v-col>
-                            <v-col cols="12" md="1">
-                                <v-checkbox label="Grid" v-model="note.grid"></v-checkbox>
-                            </v-col>
-                            <v-col cols="12" md="2">
-                                <v-btn type="button" @click.stop="selectNote">
-                                    Create Reference
-                                </v-btn>
-                            </v-col>
-                            <v-col cols="12" md="1">
-                                <v-btn @click="deleteNote" dark class="dangerous" color="red">
-                                    <v-icon>delete</v-icon>
-                                </v-btn>
-                            </v-col>
-                        </v-row>
-                        <div class="overflow-y-auto" style="max-height: 50vh; position: relative; margin-top: 50px; ">
-                            <TiptapVuetify v-model="note.text" :extensions="extensions"></TiptapVuetify>
-                        </div>
-                    </v-form>
+                <v-card-text>
+                    <v-text-field
+                            v-model="note.name"
+                            label="Note Name"
+                            required
+                    ></v-text-field>
+
+                    <v-slider
+                            label="Note Order"
+                            max="100" v-model.number="note.z"
+                            min="0" thumb-label="always"
+                    ></v-slider>
+                    <v-checkbox label="Lock" v-model="note.locked"></v-checkbox>
+                    <v-checkbox label="Grid" v-model="note.grid"></v-checkbox>
+                    <v-btn @click="deleteNote" dark class="dangerous" color="red">
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+
                 </v-card-text>
             </v-card>
-            <div class="noteLinkMenu"></div>
-            <vue-simple-context-menu
-                    :element-id="'note_ref_menu' + note.id"
-                    ref="note_ref_menu"
-                    :options="notes"
-                    @option-clicked="handleClick"
-            ></vue-simple-context-menu>
         </v-dialog>
-    </div>
+    </v-card>
 </template>
 
 <script>
-    import {
-        TiptapVuetify,
-        Heading,
-        Image,
-        Bold,
-        Italic,
-        Strike,
-        Underline,
-        Code,
-        Paragraph,
-        BulletList,
-        OrderedList,
-        ListItem,
-        Link,
-        Blockquote,
-        HardBreak,
-        HorizontalRule,
-        History
-    } from 'tiptap-vuetify'
+    import balloonEditor from '@ckeditor/ckeditor5-build-balloon';
 
     export default {
         name: 'note',
@@ -98,51 +75,26 @@
             anchor: Object,
             container: Object,
         },
-        components: {
-            TiptapVuetify,
-        },
+        components: {},
         data() {
+            this.$nextTick(function () {
+                this.$set(this.note, 'editing', false)
+            })
             if (this.note.z === undefined) {
                 this.$set(this.note, 'z', 0)
             }
 
-            let allnotes = this.anchor.notes
-            for (let container of this.anchor.container) {
-                allnotes = allnotes.concat(container.notes)
-            }
-            let notes = []
-            for (let note of allnotes) {
-                notes.push({name: (!note.name ? note.id : note.name + ' (' + note.id + ')'), note: note})
-            }
             return {
+                editing: false,
                 clipboardMessage: "",
-                notes,
                 dialog: false,
-                extensions: [
-                    Image,
-                    History,
-                    Blockquote,
-                    Link,
-                    Underline,
-                    Strike,
-                    Italic,
-                    ListItem,
-                    BulletList,
-                    OrderedList,
-                    [Heading, {
-                        options: {
-                            levels: [1, 2, 3]
-                        }
-                    }],
-                    Bold,
-                    Code,
-                    HorizontalRule,
-                    Paragraph,
-                    HardBreak
-                ],
+                editor: balloonEditor,
             }
         },
         methods: {
+            toggleEditing() {
+                this.$set(this.note, 'editing', !this.note.editing)
+            },
             handleClick(item) {
                 let link = '<a href="#/notes/' + item.option.note.id + '">' + item.option.name + '</a>'
                 this.$set(this.note, 'text', link + '<br>' + this.note.text)
@@ -156,33 +108,24 @@
                     return val.id !== this.note.id
                 })
             },
-            selectNote(e) {
-                this.$refs.note_ref_menu.showMenu(e)
-            }
         },
     }
 </script>
 
 
-<style>
-    .scroll-y {
-        overflow-y: auto;
-        height: 100%;
-    }
-
-    .note, .note * {
+<style scoped>
+    .note {
         touch-action: none;
+        padding-bottom: 16px;
     }
 
-    .tiptap-vuetify-editor__toolbar {
-        position: fixed;
-        margin-top: -50px;
+    .note .v-card__text {
+        height: 100%;
+        padding-top: 30px;
+        overflow-y: auto;
     }
 
-    .noteLinkMenu + div {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 9999;
+    .note .v-card__text.static {
+        padding: 50px 25px 25px 25px;
     }
 </style>

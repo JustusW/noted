@@ -8,6 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-balloon": "^19.0.2",
+    "@ckeditor/ckeditor5-build-inline": "^19.0.2",
+    "@ckeditor/ckeditor5-vue": "^1.0.1",
     "core-js": "^3.6.4",
     "interactjs": "^1.9.18",
     "jquery": "^3.5.1",

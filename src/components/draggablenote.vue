@@ -1,12 +1,12 @@
 <template>
     <dragResize
             :box="{
-                x: note.x + anchor.x,
-                y: note.y + anchor.y,
+                x: note.x,
+                y: note.y,
                 w: note.width,
                 h: note.height,
                 z: note.z,
-                locked: note.locked,
+                locked: note.locked || note.editing,
                 grid: note.grid,
                 anchorGrid: anchor.grid,
             }"
@@ -32,8 +32,8 @@
         },
         mounted() {
             this.$watch('$refs.dr.rect', function (val) {
-                this.$set(this.note, 'x', val.x - this.anchor.x)
-                this.$set(this.note, 'y', val.y - this.anchor.y)
+                this.$set(this.note, 'x', val.x)
+                this.$set(this.note, 'y', val.y)
                 this.$set(this.note, 'width', val.w)
                 this.$set(this.note, 'height', val.h)
                 this.$set(this.note, 'z', val.z)

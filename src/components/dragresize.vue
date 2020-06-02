@@ -35,15 +35,15 @@
             },
             resize(e) {
                 let event = e.detail
-                this.rect.w += event.deltaRect.width
-                this.rect.h += event.deltaRect.height
-                this.rect.x += event.deltaRect.left
-                this.rect.y += event.deltaRect.top
+                this.rect.w += event.deltaRect.width / this.scale
+                this.rect.h += event.deltaRect.height / this.scale
+                this.rect.x += event.deltaRect.left / this.scale
+                this.rect.y += event.deltaRect.top / this.scale
             },
             move(e) {
                 let event = e.detail
-                this.rect.x += event.dx * (this.scale || 1)
-                this.rect.y += event.dy * (this.scale || 1)
+                this.rect.x += event.dx / this.scale
+                this.rect.y += event.dy / this.scale
             },
             setInteract(reset) {
                 this.i = interact(this.$el)
@@ -128,12 +128,10 @@
                 this.setInteract()
             })
             this.$watch('box.grid', function (v) {
-                console.log('box.grid', v)
                 this.rect.grid = v
                 this.setInteract(true)
             })
             this.$watch('box.anchorGrid', function (v) {
-                console.log('box.anchorGrid', v)
                 this.rect.anchorGrid = v
                 this.setInteract(true)
             })
