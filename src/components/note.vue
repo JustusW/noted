@@ -25,6 +25,12 @@
                             Settings
                         </v-list-item-content>
                     </v-list-item>
+                    <v-list-item v-if="note.container" link @click="escape">
+                        <v-list-item-icon class="material-icons">eject</v-list-item-icon>
+                        <v-list-item-content>
+                            Escape Container
+                        </v-list-item-content>
+                    </v-list-item>
                 </v-list>
             </v-menu>
             <v-btn icon class="material-icons" v-model="note.editing" @click="toggleEditing">
@@ -92,6 +98,17 @@
             }
         },
         methods: {
+            escape() {
+                this.note.container = false
+                this.note.x = this.container.x
+                this.note.y = this.container.y
+                this.note.width = 200
+                this.note.height = 200
+                this.anchor.notes.push(this.note)
+                this.container.notes = this.container.notes.filter(v => {
+                    return v.id !== this.note.id
+                })
+            },
             toggleEditing() {
                 this.$set(this.note, 'editing', !this.note.editing)
             },

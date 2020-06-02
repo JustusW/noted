@@ -29,14 +29,22 @@
                             Settings
                         </v-list-item-content>
                     </v-list-item>
+                    <v-list-item link @click="newNote">
+                        <v-list-item-icon class="material-icons">add</v-list-item-icon>
+                        <v-list-item-content>
+                            Note
+                        </v-list-item-content>
+                    </v-list-item>
                 </v-list>
             </v-menu>
         </v-toolbar>
-        <div class="noteContainerHandle">
+        <div class="noteContainerHandle"
+            @wheel.stop="">
             <div class="noteContainer"
                  :style="[
                      'background-color: ' + anchor.bgcolor
-                 ].join('; ')">
+                 ].join('; ')"
+                 v-on:mouseleave="autolock = false">
                 <Dashboard :id="container.id">
                     <DashLayout
                             :breakpoint="'md'"
@@ -50,8 +58,7 @@
                                 :resizable="!note.editing"
                         >
                             <div class="content"
-                                 v-on:mousedown="autolock = true"
-                                 v-on:mouseup="autolock = false">
+                                 v-on:mousedown="autolock = true">
                                 <Note :anchor="anchor"
                                       :note="note"
                                       :container="container"
@@ -103,7 +110,8 @@
 <script>
     import {Dashboard, DashLayout, DashItem} from "vue-responsive-dash";
     import dragResize from './dragresize'
-    import Note from "./gridnote";
+    import NoteComp from "./gridnote";
+    import {Note} from "@/data";
 
     export default {
         name: "container",
@@ -120,7 +128,7 @@
             }
         },
         components: {
-            Note,
+            Note: NoteComp,
             dragResize,
             Dashboard, DashLayout, DashItem
         },
@@ -129,6 +137,12 @@
             container: Object
         },
         methods: {
+            newNote() {
+                let note = new Note({x: 0, y: 0, width: 1, height: 1})
+                note.container = true
+                console.log(note)
+                this.container.notes.push(note)
+            },
             checkPrevention(e) {
                 if (e.target.closest('.item')) {
                     this.autolock = true
@@ -164,6 +178,7 @@
     .noteContainerHandle {
         padding: 50px;
         border: 5px dashed lightgray;
+        overflow-y: auto;
     }
 
     .noteContainerHandle:hover {

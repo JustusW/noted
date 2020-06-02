@@ -59,7 +59,9 @@ class Anchor extends Object {
         let notes = []
         if (ref.notes) {
             for (let n of ref.notes) {
-                notes.push(new Note(n))
+                let note = new Note(n)
+                note.container = false
+                notes.push(note)
             }
         }
         this.notes = notes
@@ -82,7 +84,9 @@ class Container extends Base {
         let notes = []
         if (ref.notes) {
             for (let n of ref.notes) {
-                notes.push(new Note(n))
+                let note = new Note(n)
+                note.container = true
+                notes.push(note)
             }
         }
         this.notes = notes

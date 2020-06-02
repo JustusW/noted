@@ -1,5 +1,5 @@
 <template>
-        <Note :note="note" :anchor="anchor"></Note>
+        <Note :note="note" :anchor="anchor" :container="container"></Note>
 </template>
 
 <script>

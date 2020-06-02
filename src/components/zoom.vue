@@ -29,11 +29,14 @@
             this.pz.dispose()
         },
         methods: {
-            reset() {
+            reset(scale) {
+                if (!scale) {
+                    scale = 5.
+                }
                 let pz = this.pz
                 pz.moveTo(10,10)
                 pz.moveTo(0,0)
-                pz.zoomAbs(0,0, 1)
+                pz.zoomAbs(0,0, scale/5)
             },
         },
     }

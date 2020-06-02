@@ -1,26 +1,5 @@
 <template>
     <v-content v-if="anchor" :style="'background: ' + anchor.bgcolor">
-        <v-app-bar absolute dense collapse dark>
-            <v-menu
-                    offset-y
-                    bottom
-                    dark
-                    origin="center center"
-                    transition="scale-transition">
-                <template v-slot:activator="{ on }">
-                    <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
-                </template>
-                <v-list>
-                    <v-list-item link @click="settingsDialog = true">
-                        <v-list-item-icon class="material-icons">settings</v-list-item-icon>
-                        <v-list-item-content>
-                            Settings
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-            <v-btn link icon class="material-icons" @click="$refs.zoom.reset()">home</v-btn>
-        </v-app-bar>
         <div style="width: 100%; height: 100%; " @dblclick="openMenu">
             <Zoom :anchor="anchor" ref="zoom">
                 <div v-for="container in anchor.container"
@@ -41,6 +20,50 @@
             </Zoom>
         </div>
 
+        <v-speed-dial
+                top absolute right
+                v-model="zoomControls"
+                direction="left"
+                open-on-hover="hover"
+        >
+            <template v-slot:activator>
+                <v-btn
+                        style="font-size: 1.5rem;"
+                        v-model="zoomControls"
+                        dark
+                        fab
+                        small
+                        class="material-icons"
+                        v-text="zoomControls?'home':'zoom_in'"
+                        @click="$refs.zoom.reset()"
+                >
+                </v-btn>
+            </template>
+            <v-btn
+                    v-for="i in 5"
+                    v-bind:key="'zoomRange.' + i"
+                    dark
+                    fab
+                    small
+                    @click="$refs.zoom.reset(6 - i)"
+            >
+                {{6 - i}}x
+            </v-btn>
+        </v-speed-dial>
+        <!--        <v-fab-transition>-->
+        <!--            <v-btn-->
+        <!--                    v-show="!hidden"-->
+        <!--                    dark-->
+        <!--                    absolute-->
+        <!--                    top-->
+        <!--                    right-->
+        <!--                    fab-->
+        <!--                    class="material-icons"-->
+        <!--                    @click="$refs.zoom.reset()"-->
+        <!--            >-->
+        <!--                <v-icon>home</v-icon>-->
+        <!--            </v-btn>-->
+        <!--        </v-fab-transition>-->
         <v-menu
                 dark
                 origin="center center"
@@ -54,6 +77,12 @@
                 <v-list-item link @click="newNote">
                     <v-list-item-icon class="material-icons">add</v-list-item-icon>
                     <v-list-item-content>Note</v-list-item-content>
+                </v-list-item>
+                <v-list-item link @click="settingsDialog = true">
+                    <v-list-item-icon class="material-icons">settings</v-list-item-icon>
+                    <v-list-item-content>
+                        Settings
+                    </v-list-item-content>
                 </v-list-item>
             </v-list>
         </v-menu>
@@ -83,6 +112,7 @@
         data() {
             let anchor = getAnchor()
             return {
+                zoomControls: false,
                 dropped: {},
                 menu: {
                     x: 0, y: 0, show: false,
@@ -100,6 +130,7 @@
                         v.note.y = 0
                         v.note.width = 1
                         v.note.height = 1
+                        v.note.container = true
                         v.container.notes.push(v.note)
                         this.anchor.notes = this.anchor.notes.filter(n => {
                             return n.id !== v.note.id
