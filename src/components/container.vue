@@ -1,8 +1,8 @@
 <template>
     <dragResize
             :box="{
-                x: container.x + anchor.x,
-                y: container.y + anchor.y,
+                x: container.x,
+                y: container.y,
                 w: container.width,
                 h: container.height,
                 z: container.z,
@@ -12,17 +12,31 @@
             :scale="anchor.scale"
             ref="dr"
             :drop="true">
-        <div class="noteContainerHandle"
-             @dblclick.stop="dialog = true"
-        >
+        <v-toolbar absolute dense collapse>
+            <v-menu
+                    offset-y
+                    top
+                    dark
+                    origin="center center"
+                    transition="scale-transition">
+                <template v-slot:activator="{ on }">
+                    <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
+                </template>
+                <v-list>
+                    <v-list-item link @click="dialog = true">
+                        <v-list-item-icon class="material-icons">settings</v-list-item-icon>
+                        <v-list-item-content>
+                            Settings
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+        </v-toolbar>
+        <div class="noteContainerHandle">
             <div class="noteContainer"
                  :style="[
                      'background-color: ' + anchor.bgcolor
-                 ].join('; ')"
-                 v-on:mouseup="autolock = false"
-                 v-on:mouseleave="autolock = false"
-                 v-on:mousedown="checkPrevention"
-            >
+                 ].join('; ')">
                 <Dashboard :id="container.id">
                     <DashLayout
                             :breakpoint="'md'"
@@ -32,9 +46,12 @@
                                 v-for="note in container.notes"
                                 v-bind:key="note.id"
                                 v-bind.sync="note"
+                                :draggable="!note.editing"
+                                :resizable="!note.editing"
                         >
                             <div class="content"
-                                 v-on:mousedown="autolock = true">
+                                 v-on:mousedown="autolock = true"
+                                 v-on:mouseup="autolock = false">
                                 <Note :anchor="anchor"
                                       :note="note"
                                       :container="container"
@@ -113,7 +130,7 @@
         },
         methods: {
             checkPrevention(e) {
-                if(e.target.closest('.item')) {
+                if (e.target.closest('.item')) {
                     this.autolock = true
                 }
             },
@@ -124,23 +141,9 @@
             },
         },
         mounted() {
-            for (let note of this.container.notes) {
-                if (note.width > 12) {
-                    this.$set(note, 'width', 1)
-                }
-                if (note.height > 12) {
-                    this.$set(note, 'height', 1)
-                }
-                if (note.x > 12) {
-                    this.$set(note, 'x', 0)
-                }
-                if (note.y > 100) {
-                    this.$set(note, 'y', 0)
-                }
-            }
             this.$watch('$refs.dr.rect', function (val) {
-                this.$set(this.container, 'x', val.x - this.anchor.x)
-                this.$set(this.container, 'y', val.y - this.anchor.y)
+                this.$set(this.container, 'x', val.x)
+                this.$set(this.container, 'y', val.y)
                 this.$set(this.container, 'width', val.w)
                 this.$set(this.container, 'height', val.h)
                 this.$set(this.container, 'z', val.z)
