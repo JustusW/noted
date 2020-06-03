@@ -21,13 +21,13 @@
                 <v-list
                     dark
                     color="indigo darken">
-                    <v-list-item link @click="deleteNote">
+                    <v-list-item link @click="deleteNote" v-touch:tap="deleteNote">
                         <v-list-item-icon class="material-icons">delete</v-list-item-icon>
                         <v-list-item-content>
                             Delete Note
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item link @click="dialog = true">
+                    <v-list-item link @click="dialog = true" v-touch:tap="dialog = true">
                         <v-list-item-icon class="material-icons">settings</v-list-item-icon>
                         <v-list-item-content>
                             Settings

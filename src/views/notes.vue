@@ -1,6 +1,8 @@
 <template>
     <v-content v-if="anchor" class="indigo lighten-3" :style="'background-color: ' + anchor.bgcolor + ' !important'">
-        <div style="width: 100%; height: 100%; " @dblclick="openMenu" @click="setCommandline"
+        <div style="width: 100%; height: 100%; "
+             @click="setCommandline"
+             v-touch:tap="setCommandlineTouch"
              @mousedown="mouseDown"
              @wheel="cmd.show = false"
         >
@@ -8,6 +10,7 @@
                 <div v-for="container in anchor.container"
                      v-bind:key="container.id"
                      v-on:mousedown.stop=""
+                     v-touch:tap.stop=""
                      v-on:dropped.stop="droppedContainer($event, container)"
                 >
                     <Container :container="container" :anchor="anchor"></Container>
@@ -15,6 +18,7 @@
                 <div v-for="note in anchor.notes"
                      v-bind:key="note.id"
                      v-on:mousedown.stop=""
+                     v-touch:tap.stop=""
                      v-on:dropped.stop="droppedNote($event, note)"
                 >
                     <Note :note="note" :anchor="anchor"></Note>
@@ -145,6 +149,21 @@
                 this.$set(this.cmd.down, 'time', new Date())
                 this.$set(this.cmd.down, 'x', e.clientX)
                 this.$set(this.cmd.down, 'y', e.clientY - this.OY)
+            },
+            setCommandlineTouch(e) {
+                if (e.changedTouches.length !== 1) {
+                    return
+                }
+                this.$set(this.cmd, 'x', e.changedTouches[0].clientX)
+                this.$set(this.cmd, 'y', e.changedTouches[0].clientY - this.OY)
+                this.$set(this.cmd, 'show', true)
+                this.$nextTick(function () {
+                    console.log(this.cmd.y, this.$el)
+                    let cmd = this.$refs.commandline
+                    setTimeout(function () {
+                        cmd.focus()
+                    }, 200)
+                })
             },
             setCommandline(e) {
                 let now = new Date()
