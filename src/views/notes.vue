@@ -58,7 +58,7 @@
             'position: absolute',
             'height: 56px',
             'left: ' + (cmd.x - 74) + 'px',
-            'top: ' + (cmd.y - 44) + 'px',
+            'top: ' + (cmd.y - 16) + 'px',
             '',].join('; ')"
              v-if="cmd.show"
              @cmdClose="cmd.show = false"
@@ -136,7 +136,7 @@
         computed: {
             OY() {
                 let rect = this.$el.firstElementChild.getBoundingClientRect()
-                return rect.top - 28
+                return rect.top
             }
         },
         methods: {
@@ -176,7 +176,7 @@
                 let offsetX = -tf.x
                 let offsetY = -tf.y
                 let x = Math.round(offsetX + this.cmd.x)
-                let y = Math.round(offsetY + this.cmd.y - 56 / 2)
+                let y = Math.round(offsetY + this.cmd.y)
                 return {x, y}
             },
             newContainer() {
@@ -187,9 +187,13 @@
                 let ref = this.menuPosition()
                 if (e && !Number.isInteger(e.detail)) {
                     ref.text = e.detail
+                    ref.x -= 25
+                    ref.y -= 50
                     this.$set(this.cmd, 'show', false)
                 }
-                this.anchor.notes.push(new Note(ref))
+                let n = new Note(ref)
+                n.editing = true
+                this.anchor.notes.push(n)
             },
             openMenu(e) {
                 this.$set(this.menu, 'x', e.clientX)

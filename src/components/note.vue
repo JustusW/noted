@@ -47,8 +47,8 @@
         </v-toolbar>
         <v-card-text class="static" v-if="!note.editing" v-html="note.text">
         </v-card-text>
-        <v-card-text v-if="note.editing">
-            <ckeditor v-model="note.text" :editor="editor" :config="{}"></ckeditor>
+        <v-card-text v-if="note.editing" @keydown.stop="">
+            <ckeditor v-model="note.text" :editor="editor" @ready="ready" :config="{}"></ckeditor>
         </v-card-text>
         <v-dialog v-model="dialog" width="300">
             <v-card>
@@ -91,14 +91,12 @@
         },
         components: {},
         data() {
-            this.$nextTick(function () {
-                this.$set(this.note, 'editing', false)
-            })
             if (this.note.z === undefined) {
                 this.$set(this.note, 'z', 0)
             }
 
             return {
+                startWithFocus: this.note.editing,
                 editing: false,
                 clipboardMessage: "",
                 dialog: false,
@@ -106,6 +104,9 @@
             }
         },
         methods: {
+            ready(e) {
+                e.ui.element.focus()
+            },
             escape() {
                 this.note.container = false
                 this.note.x = this.container.x
