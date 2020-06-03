@@ -19,6 +19,12 @@
                     <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
                 </template>
                 <v-list>
+                    <v-list-item link @click="deleteNote">
+                        <v-list-item-icon class="material-icons">delete</v-list-item-icon>
+                        <v-list-item-content>
+                            Delete Note
+                        </v-list-item-content>
+                    </v-list-item>
                     <v-list-item link @click="dialog = true">
                         <v-list-item-icon class="material-icons">settings</v-list-item-icon>
                         <v-list-item-content>
@@ -121,6 +127,9 @@
                 e.stopPropagation()
             },
             deleteNote() {
+                if (this.container) {
+                    this.escape()
+                }
                 this.anchor.notes = this.anchor.notes.filter(val => {
                     return val.id !== this.note.id
                 })
@@ -130,7 +139,7 @@
 </script>
 
 
-<style scoped>
+<style>
     .note {
         touch-action: none;
         padding-bottom: 16px;

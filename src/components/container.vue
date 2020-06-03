@@ -39,7 +39,8 @@
             </v-menu>
         </v-toolbar>
         <div class="noteContainerHandle"
-            @wheel.stop="">
+             @wheel.stop="">
+
             <div class="noteContainer"
                  :style="[
                      'background-color: ' + anchor.bgcolor
@@ -63,6 +64,13 @@
                                       :note="note"
                                       :container="container"
                                 ></Note>
+                            </div>
+                        </DashItem>
+                        <DashItem v-bind.sync="cmd">
+                            <div class="content"
+                                 v-on:mousedown="autolock = true"
+                                 v-on:newNote="newNote">
+                                <commandline></commandline>
                             </div>
                         </DashItem>
                     </DashLayout>
@@ -112,6 +120,7 @@
     import dragResize from './dragresize'
     import NoteComp from "./gridnote";
     import {Note} from "@/data";
+    import Commandline from "@/components/commandline";
 
     export default {
         name: "container",
@@ -123,11 +132,13 @@
                 this.container.cols = 3
             }
             return {
+                cmd: {id: 'cmd', x: 0, y: 0, width: this.container.cols, height: 1},
                 autolock: false,
                 dialog: false,
             }
         },
         components: {
+            Commandline,
             Note: NoteComp,
             dragResize,
             Dashboard, DashLayout, DashItem
@@ -137,11 +148,21 @@
             container: Object
         },
         methods: {
-            newNote() {
-                let note = new Note({x: 0, y: 0, width: 1, height: 1})
+            newNote(e) {
+                let ref = {x: 0, y: 0, width: 1, height: 1, text: ''}
+                if (e) {
+                    ref.text = e.detail
+                    ref.x = this.cmd.x
+                    ref.y = this.cmd.y
+                    ref.width = this.cmd.width
+                    ref.height = this.cmd.height
+                    this.$set(this.cmd, 'y', this.cmd.y + 1)
+                }
+                let note = new Note(ref)
                 note.container = true
-                console.log(note)
-                this.container.notes.push(note)
+                this.$nextTick(function () {
+                    this.container.notes.push(note)
+                })
             },
             checkPrevention(e) {
                 if (e.target.closest('.item')) {

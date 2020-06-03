@@ -24,7 +24,7 @@
                 top absolute right
                 v-model="zoomControls"
                 direction="left"
-                open-on-hover="hover"
+                :open-on-hover="true"
         >
             <template v-slot:activator>
                 <v-btn
@@ -50,20 +50,6 @@
                 {{6 - i}}x
             </v-btn>
         </v-speed-dial>
-        <!--        <v-fab-transition>-->
-        <!--            <v-btn-->
-        <!--                    v-show="!hidden"-->
-        <!--                    dark-->
-        <!--                    absolute-->
-        <!--                    top-->
-        <!--                    right-->
-        <!--                    fab-->
-        <!--                    class="material-icons"-->
-        <!--                    @click="$refs.zoom.reset()"-->
-        <!--            >-->
-        <!--                <v-icon>home</v-icon>-->
-        <!--            </v-btn>-->
-        <!--        </v-fab-transition>-->
         <v-menu
                 dark
                 origin="center center"
