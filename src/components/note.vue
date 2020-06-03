@@ -4,21 +4,23 @@
             outlined
             shaped
             dark
+            color="indigo lighten-2"
             height="100%"
             width="100%"
             @wheel.stop=""
     >
-        <v-toolbar absolute dense collapse>
+        <v-toolbar absolute dense collapse color="indigo darken">
             <v-menu
                     offset-y
                     top
-                    dark
                     origin="center center"
                     transition="scale-transition">
                 <template v-slot:activator="{ on }">
                     <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
                 </template>
-                <v-list>
+                <v-list
+                    dark
+                    color="indigo darken">
                     <v-list-item link @click="deleteNote">
                         <v-list-item-icon class="material-icons">delete</v-list-item-icon>
                         <v-list-item-content>

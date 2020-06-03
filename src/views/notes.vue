@@ -1,6 +1,9 @@
 <template>
-    <v-content v-if="anchor" :style="'background: ' + anchor.bgcolor">
-        <div style="width: 100%; height: 100%; " @dblclick="openMenu">
+    <v-content v-if="anchor" class="indigo lighten-3" :style="'background-color: ' + anchor.bgcolor + ' !important'">
+        <div style="width: 100%; height: 100%; " @dblclick="openMenu" @click="setCommandline"
+             @mousedown="mouseDown"
+             @wheel="cmd.show = false"
+        >
             <Zoom :anchor="anchor" ref="zoom">
                 <div v-for="container in anchor.container"
                      v-bind:key="container.id"
@@ -50,28 +53,21 @@
                 {{6 - i}}x
             </v-btn>
         </v-speed-dial>
-        <v-menu
-                dark
-                origin="center center"
-                transition="scale-transition"
-                v-model="menu.show" :position-x="menu.x" :position-y="menu.y" absolute>
-            <v-list>
-                <v-list-item link @click="newContainer">
-                    <v-list-item-icon class="material-icons">add</v-list-item-icon>
-                    <v-list-item-content>Container</v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="newNote">
-                    <v-list-item-icon class="material-icons">add</v-list-item-icon>
-                    <v-list-item-content>Note</v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="settingsDialog = true">
-                    <v-list-item-icon class="material-icons">settings</v-list-item-icon>
-                    <v-list-item-content>
-                        Settings
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-menu>
+
+        <div :style="[
+            'position: absolute',
+            'height: 56px',
+            'left: ' + (cmd.x - 74) + 'px',
+            'top: ' + (cmd.y - 44) + 'px',
+            '',].join('; ')"
+             v-if="cmd.show"
+             @cmdClose="cmd.show = false"
+             @settings="settingsDialog = true"
+             @newContainer="newContainer"
+             @newNote="newNote"
+        >
+            <commandline ref="commandline"></commandline>
+        </div>
 
         <v-dialog v-model="settingsDialog" width="500">
             <Settings v-model="anchor"></Settings>
@@ -87,10 +83,12 @@
     import Anchor from "@/components/anchor";
     import {getAnchor, setAnchor, Container, Note} from "@/data";
     import ContainerComp from "@/components/container";
+    import Commandline from "@/components/commandline";
 
     export default {
         name: "notes",
         components: {
+            Commandline,
             Container: ContainerComp,
             Anchor,
             Zoom, Note: NoteComp, Settings
@@ -100,8 +98,8 @@
             return {
                 zoomControls: false,
                 dropped: {},
-                menu: {
-                    x: 0, y: 0, show: false,
+                cmd: {
+                    x: 0, y: 0, show: false, down: {x: 0, y: 0, time: 0},
                 },
                 settingsDialog: false,
                 anchor: anchor,
@@ -135,7 +133,38 @@
                 deep: true,
             },
         },
+        computed: {
+            OY() {
+                let rect = this.$el.firstElementChild.getBoundingClientRect()
+                return rect.top - 28
+            }
+        },
         methods: {
+            mouseDown(e) {
+                this.$set(this.cmd, 'show', false)
+                this.$set(this.cmd.down, 'time', new Date())
+                this.$set(this.cmd.down, 'x', e.clientX)
+                this.$set(this.cmd.down, 'y', e.clientY - this.OY)
+            },
+            setCommandline(e) {
+                let now = new Date()
+                if (now - this.cmd.down.time > 500
+                    || Math.abs(this.cmd.down.x - e.clientX) > 100
+                    || Math.abs(this.cmd.down.y - e.clientY + this.OY) > 100) {
+                    return
+                }
+
+                this.$set(this.cmd, 'x', e.clientX)
+                this.$set(this.cmd, 'y', e.clientY - this.OY)
+                this.$set(this.cmd, 'show', true)
+                this.$nextTick(function () {
+                    console.log(this.cmd.y, this.$el)
+                    let cmd = this.$refs.commandline
+                    setTimeout(function () {
+                        cmd.focus()
+                    }, 200)
+                })
+            },
             droppedNote(e, note) {
                 this.$set(this.dropped, 'note', note)
             },
@@ -146,15 +175,21 @@
                 let tf = this.$refs.zoom.pz.getTransform()
                 let offsetX = -tf.x
                 let offsetY = -tf.y
-                let x = Math.round(offsetX + this.menu.x)
-                let y = Math.round(offsetY + this.menu.y)
+                let x = Math.round(offsetX + this.cmd.x)
+                let y = Math.round(offsetY + this.cmd.y - 56 / 2)
                 return {x, y}
             },
             newContainer() {
                 this.anchor.container.push(new Container(this.menuPosition()))
+                this.$set(this.cmd, 'show', false)
             },
-            newNote() {
-                this.anchor.notes.push(new Note(this.menuPosition()))
+            newNote(e) {
+                let ref = this.menuPosition()
+                if (e && !Number.isInteger(e.detail)) {
+                    ref.text = e.detail
+                    this.$set(this.cmd, 'show', false)
+                }
+                this.anchor.notes.push(new Note(ref))
             },
             openMenu(e) {
                 this.$set(this.menu, 'x', e.clientX)

@@ -1,6 +1,6 @@
 <template>
     <v-app id="noted">
-        <v-system-bar app color="light-green">
+        <v-app-bar app color="indigo">
             <v-menu
                     offset-y
                     bottom
@@ -24,7 +24,7 @@
 
                 </v-list>
             </v-menu>
-        </v-system-bar>
+        </v-app-bar>
         <router-view></router-view>
 
     </v-app>

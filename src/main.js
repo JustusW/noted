@@ -27,11 +27,13 @@ let vuetify = new Vuetify({
     },
 })
 
-new Vue({
-    render: h => h(App),
-    vuetify,
-    router: router.router,
-    directives: {
-        resize
-    }
-}).$mount('#app')
+console.log(
+    new Vue({
+        render: h => h(App),
+        vuetify,
+        router: router.router,
+        directives: {
+            resize
+        }
+    }).$mount('#app')
+)

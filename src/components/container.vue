@@ -12,33 +12,7 @@
             :scale="anchor.scale"
             ref="dr"
             :drop="true">
-        <v-toolbar absolute dense collapse>
-            <v-menu
-                    offset-y
-                    top
-                    dark
-                    origin="center center"
-                    transition="scale-transition">
-                <template v-slot:activator="{ on }">
-                    <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
-                </template>
-                <v-list>
-                    <v-list-item link @click="dialog = true">
-                        <v-list-item-icon class="material-icons">settings</v-list-item-icon>
-                        <v-list-item-content>
-                            Settings
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item link @click="newNote">
-                        <v-list-item-icon class="material-icons">add</v-list-item-icon>
-                        <v-list-item-content>
-                            Note
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-        </v-toolbar>
-        <div class="noteContainerHandle"
+        <div class="noteContainerHandle indigo lighten-4"
              @wheel.stop="">
 
             <div class="noteContainer"
@@ -69,7 +43,8 @@
                         <DashItem v-bind.sync="cmd">
                             <div class="content"
                                  v-on:mousedown="autolock = true"
-                                 v-on:newNote="newNote">
+                                 v-on:newNote="newNote"
+                                @settings="dialog = true">
                                 <commandline></commandline>
                             </div>
                         </DashItem>
@@ -206,9 +181,11 @@
         overflow-y: auto;
     }
 
+    .noteContainerHandle:not(:hover) {
+        background-color: unset !important;
+    }
     .noteContainerHandle:hover {
         margin: 0;
-        background-color: #e1e1e1;
     }
 
     .drop-active .noteContainerHandle {
