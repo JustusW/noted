@@ -1,5 +1,5 @@
 <template>
-    <v-card dark class="note">
+    <v-card dark class="note" shaped outlined color="cyan">
         <v-card-text @dblclick.stop="">
             <ckeditor @ready="instanceReady" @blur="blur" v-model="text" :editor="editor" :config="{}"></ckeditor>
         </v-card-text>
