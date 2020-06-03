@@ -131,12 +131,12 @@
             if (this.container.cols === undefined) {
                 this.container.cols = 3
             }
-            let cmdY = 0
+            let cmdY = -1
             for (let n of this.container.notes) {
                 cmdY = Math.max(cmdY, n.y)
             }
             return {
-                cmd: {id: 'cmd', x: 0, y: cmdY, width: this.container.cols, height: 1},
+                cmd: {id: 'cmd', x: 0, y: cmdY + 1, width: this.container.cols, height: 1},
                 autolock: false,
                 dialog: false,
             }
@@ -160,7 +160,7 @@
                     ref.y = this.cmd.y
                     ref.width = this.cmd.width
                     ref.height = this.cmd.height
-                    this.$set(this.cmd, 'y', this.cmd.y + 10)
+                    this.$set(this.cmd, 'y', this.cmd.y + 1)
                 }
                 let note = new Note(ref)
                 note.container = true
