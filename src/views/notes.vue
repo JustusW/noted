@@ -187,8 +187,10 @@
                 let ref = this.menuPosition()
                 if (e && !Number.isInteger(e.detail)) {
                     ref.text = e.detail
-                    ref.x -= 25
-                    ref.y -= 50
+                    if (ref.text) {
+                        ref.x -= 25
+                        ref.y -= 50
+                    }
                     this.$set(this.cmd, 'show', false)
                 }
                 let n = new Note(ref)
