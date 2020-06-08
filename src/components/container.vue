@@ -165,28 +165,31 @@
                 }
                 this.extend(null, direction)
 
-
                 if (direction === 'left') {
                     for (let note of this.container.notes) {
                         this.$set(note, 'x', note.x + 1)
                     }
-                    this.$set(this.activeNote, 'x', 0)
-                } else {
-                    this.$set(this.activeNote, 'x', this.container.cols - 1)
-                }
-                this.$nextTick(function () {
                     let dl = this.$refs.dashlayout.l
                     let item = this.$refs['dashitem.' + this.activeNote.id][0]
                     dl.itemDraggingComplete(item.item)
-                })
+                    this.$set(this.activeNote, 'x', 0)
+                } else {
+                    let dl = this.$refs.dashlayout.l
+                    let item = this.$refs['dashitem.' + this.activeNote.id][0]
+                    dl.itemDraggingComplete(item.item)
+                    this.$set(this.activeNote, 'x', this.container.cols - 1)
+                }
             },
             extend(e, direction) {
-                let width = this.container.width / this.container.cols
                 this.$set(this.container, 'cols', this.container.cols + 1)
                 this.$set(this.cmd, 'width', this.container.cols)
-                this.$set(this.container, 'width', this.container.width + width)
-                if (direction === 'left') {
-                    this.$set(this.container, 'x', this.container.x - width)
+
+                if (this.container.autoextend) {
+                    let width = this.container.width / this.container.cols
+                    this.$set(this.container, 'width', this.container.width + width)
+                    if (direction === 'left') {
+                        this.$set(this.container, 'x', this.container.x - width)
+                    }
                 }
             },
             newNote(e) {
