@@ -85,6 +85,7 @@
                                 required
                         ></v-text-field>
                         <v-checkbox label="Compact" v-model="container.compact"></v-checkbox>
+                        <v-checkbox label="Auto Extend" v-model="container.autoextend"></v-checkbox>
                         <v-checkbox label="Lock" v-model="container.locked"></v-checkbox>
                         <v-checkbox label="Grid" v-model="container.grid"></v-checkbox>
                         <br>
