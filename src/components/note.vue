@@ -27,7 +27,7 @@
                             Delete Note
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item link @click="dialog = true" v-touch:tap="dialog = true">
+                    <v-list-item link @click="openSettings" v-touch:tap="openSettings">
                         <v-list-item-icon class="material-icons">settings</v-list-item-icon>
                         <v-list-item-content>
                             Settings
@@ -104,6 +104,9 @@
             }
         },
         methods: {
+            openSettings() {
+                this.dialog = true
+            },
             ready(e) {
                 e.ui.element.focus()
             },
@@ -126,6 +129,7 @@
                 this.$set(this.note, 'text', link + '<br>' + this.note.text)
             },
             touch(e) {
+                console.log("touch???", e)
                 this.dialog = true
                 e.stopPropagation()
             },

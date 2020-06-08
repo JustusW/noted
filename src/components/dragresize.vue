@@ -122,6 +122,13 @@
             this.$watch('box.z', function (v) {
                 this.rect.z = v
             })
+            this.$watch('box.w', function (v) {
+                console.log('box.width', v)
+                this.rect.w = v
+            })
+            this.$watch('box.h', function (v) {
+                this.rect.h = v
+            })
             this.setInteract()
             this.$watch('box.locked', function (v) {
                 this.rect.locked = v

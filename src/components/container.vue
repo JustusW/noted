@@ -13,7 +13,9 @@
             ref="dr"
             :drop="true">
         <div class="noteContainerHandle indigo lighten-4"
-             @wheel.stop="">
+             @wheel.stop=""
+             v-on:mouseleave="active = false"
+             v-on:mouseenter="active = true">
 
             <div class="noteContainer"
                  :style="[
@@ -31,6 +33,8 @@
                                 v-bind.sync="note"
                                 :draggable="!note.editing"
                                 :resizable="!note.editing"
+                                @moveStart="move(true, note)"
+                                @moveEnd="move(false, note)"
                         >
                             <div class="content"
                                  v-on:mousedown="autolock = true">
@@ -44,13 +48,27 @@
                             <div class="content"
                                  v-on:mousedown="autolock = true"
                                  v-on:newNote="newNote"
-                                @settings="dialog = true">
+                                 @settings="dialog = true">
                                 <commandline></commandline>
                             </div>
                         </DashItem>
                     </DashLayout>
                 </Dashboard>
             </div>
+            <!--            <v-btn v-if="active" fab absolute top style="left: 50%; margin-left: -1em; font-size: 2em; " class="material-icons"-->
+            <!--                   @click="extend($event, 'up')">keyboard_arrow_up</v-btn>-->
+            <!--            <v-btn v-if="active" fab absolute bottom style="left: 50%; margin-left: -1em; font-size: 2em; " class="material-icons"-->
+            <!--                   @click="extend($event, 'down')">keyboard_arrow_down</v-btn>-->
+            <v-btn v-if="active" fab absolute style="top: 50%; right: -1em; margin-top: -1em; font-size: 2em; "
+                   class="material-icons"
+                   @click="extend($event, 'right')"
+                   @mouseup="dragEnd('right')">keyboard_arrow_right
+            </v-btn>
+            <v-btn v-if="active" fab absolute style="top: 50%; left: -1em; margin-top: -1em; font-size: 2em; "
+                   class="material-icons"
+                   @click="extend($event, 'left')"
+                   @mouseup="dragEnd('left')">keyboard_arrow_left
+            </v-btn>
         </div>
         <v-dialog v-model="dialog" width="300">
             <v-card>
@@ -106,15 +124,21 @@
             if (this.container.cols === undefined) {
                 this.container.cols = 3
             }
-            let cmdY = -1
-            for (let n of this.container.notes) {
-                cmdY = Math.max(cmdY, n.y)
-            }
             return {
-                cmd: {id: 'cmd', x: 0, y: cmdY + 1, width: this.container.cols, height: 1},
                 autolock: false,
                 dialog: false,
+                active: false,
+                activeNote: undefined,
             }
+        },
+        computed: {
+            cmd() {
+                let cmdY = -1
+                for (let n of this.container.notes) {
+                    cmdY = Math.max(cmdY, n.y)
+                }
+                return {id: 'cmd', x: 0, y: cmdY + 1, width: this.container.cols, height: 1}
+            },
         },
         components: {
             Commandline,
@@ -127,6 +151,35 @@
             container: Object
         },
         methods: {
+            move(moving, note) {
+                if (note)
+                    this.activeNote = note
+                else
+                    this.activeNote = undefined
+            },
+            dragEnd(direction) {
+                if(!this.activeNote) {
+                    return
+                }
+                this.extend(null, direction)
+                if (direction === 'left') {
+                    this.$set(this.activeNote, 'x', 0)
+                } else {
+                    this.$set(this.activeNote, 'x', this.container.cols - 1)
+                }
+            },
+            extend(e, direction) {
+                let width = this.container.width / this.container.cols
+                this.$set(this.container, 'cols', this.container.cols + 1)
+                this.$set(this.cmd, 'width', this.container.cols)
+                this.$set(this.container, 'width', this.container.width + width)
+                if (direction === 'left') {
+                    this.$set(this.container, 'x', this.container.x - width)
+                }
+
+                console.log(direction,)
+
+            },
             newNote(e) {
                 let ref = {x: 0, y: 0, width: 1, height: 1, text: ''}
                 if (e) {
@@ -184,6 +237,7 @@
     .noteContainerHandle:not(:hover) {
         background-color: unset !important;
     }
+
     .noteContainerHandle:hover {
         margin: 0;
     }
