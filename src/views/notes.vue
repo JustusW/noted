@@ -85,7 +85,7 @@
     import NoteComp from '@/components/draggablenote'
     import Settings from '@/components/settings'
     import Anchor from "@/components/anchor";
-    import {getAnchor, setAnchor, Container, Note} from "@/data";
+    import {loadHelp, getAnchor, setAnchor, Container, Note} from "@/data";
     import ContainerComp from "@/components/container";
     import Commandline from "@/components/commandline";
 
@@ -97,8 +97,14 @@
             Anchor,
             Zoom, Note: NoteComp, Settings
         },
+        mounted() {
+            this.checkRoute()
+        },
         data() {
             let anchor = getAnchor()
+            if (this.$route.name === 'Help') {
+                anchor = loadHelp()
+            }
             return {
                 zoomControls: false,
                 dropped: {},
@@ -130,11 +136,19 @@
             },
             anchor: {
                 handler: _.debounce(function (v) {
+                    if (this.$route.name === 'Help') {
+                        return
+                    }
                     if (v) {
                         setAnchor(v)
                     }
                 }, 200),
                 deep: true,
+            },
+            $route() {
+                this.$nextTick(function () {
+                    this.checkRoute()
+                })
             },
         },
         computed: {
@@ -144,6 +158,18 @@
             }
         },
         methods: {
+            checkRoute() {
+                let id = parseInt(this.$route.params.id)
+                if (id) {
+                    let note = this.anchor.notes.find(n => {
+                        return n.id === id
+                    })
+                    this.focus(note)
+                }
+            },
+            focus(note) {
+                this.$refs.zoom.focus(note)
+            },
             mouseDown(e) {
                 this.$set(this.cmd, 'show', false)
                 this.$set(this.cmd.down, 'time', new Date())

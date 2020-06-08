@@ -48,7 +48,7 @@
         <v-card-text class="static" v-if="!note.editing" v-html="note.text">
         </v-card-text>
         <v-card-text v-if="note.editing" @keydown.stop="">
-            <ckeditor v-model="note.text" :editor="editor" @ready="ready" :config="{}"></ckeditor>
+            <ckeditor v-model="note.text" :editor="editor" @ready="ready" :config="editorConfig"></ckeditor>
         </v-card-text>
         <v-dialog v-model="dialog" width="300">
             <v-card>
@@ -101,6 +101,19 @@
                 clipboardMessage: "",
                 dialog: false,
                 editor: balloonEditor,
+                editorConfig: {
+                    link: {
+                        decorators: {
+                            isExternal: {
+                                mode: 'manual',
+                                label: 'Open in a new tab',
+                                attributes: {
+                                    target: '_blank'
+                                }
+                            }
+                        }
+                    }
+                },
             }
         },
         methods: {

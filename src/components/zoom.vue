@@ -38,6 +38,12 @@
                 pz.moveTo(0,0)
                 pz.zoomAbs(0,0, scale/5)
             },
+            focus(item) {
+                let pz = this.pz
+
+                pz.moveTo(0,0)
+                pz.moveTo(-item.x,-item.y)
+            }
         },
     }
 </script>
