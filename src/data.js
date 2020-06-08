@@ -33,14 +33,12 @@ class Base extends Object {
         if (!this.id || !Number.isSafeInteger(this.id)) {
             this.makeID()
         }
-        console.log(Tracker.getId(), this.id)
     }
 
     makeID() {
         this.id = Tracker.getId()
     }
 }
-console.log(Base)
 
 class Anchor extends Object {
     constructor(ref) {
@@ -80,6 +78,7 @@ class Container extends Base {
         super(ref);
 
         this.cols = ref.cols || 3
+        this.compact = ref.compact || true
 
         let notes = []
         if (ref.notes) {

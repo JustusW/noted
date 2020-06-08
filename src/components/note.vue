@@ -129,7 +129,6 @@
                 this.$set(this.note, 'text', link + '<br>' + this.note.text)
             },
             touch(e) {
-                console.log("touch???", e)
                 this.dialog = true
                 e.stopPropagation()
             },

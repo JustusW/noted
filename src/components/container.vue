@@ -26,7 +26,8 @@
                     <DashLayout
                             :breakpoint="'md'"
                             :compact="container.compact"
-                            :numberOfCols="container.cols || 1">
+                            :numberOfCols="container.cols || 1"
+                            ref="dashlayout">
                         <DashItem
                                 v-for="note in container.notes"
                                 v-bind:key="note.id"
@@ -35,6 +36,7 @@
                                 :resizable="!note.editing"
                                 @moveStart="move(true, note)"
                                 @moveEnd="move(false, note)"
+                                :ref="'dashitem.' + note.id"
                         >
                             <div class="content"
                                  v-on:mousedown="autolock = true">
@@ -158,15 +160,25 @@
                     this.activeNote = undefined
             },
             dragEnd(direction) {
-                if(!this.activeNote) {
+                if (!this.activeNote) {
                     return
                 }
                 this.extend(null, direction)
+
+
                 if (direction === 'left') {
+                    for (let note of this.container.notes) {
+                        this.$set(note, 'x', note.x + 1)
+                    }
                     this.$set(this.activeNote, 'x', 0)
                 } else {
                     this.$set(this.activeNote, 'x', this.container.cols - 1)
                 }
+                this.$nextTick(function () {
+                    let dl = this.$refs.dashlayout.l
+                    let item = this.$refs['dashitem.' + this.activeNote.id][0]
+                    dl.itemDraggingComplete(item.item)
+                })
             },
             extend(e, direction) {
                 let width = this.container.width / this.container.cols
@@ -176,9 +188,6 @@
                 if (direction === 'left') {
                     this.$set(this.container, 'x', this.container.x - width)
                 }
-
-                console.log(direction,)
-
             },
             newNote(e) {
                 let ref = {x: 0, y: 0, width: 1, height: 1, text: ''}

@@ -158,7 +158,6 @@
                 this.$set(this.cmd, 'y', e.changedTouches[0].clientY - this.OY)
                 this.$set(this.cmd, 'show', true)
                 this.$nextTick(function () {
-                    console.log(this.cmd.y, this.$el)
                     let cmd = this.$refs.commandline
                     setTimeout(function () {
                         cmd.focus()
@@ -177,7 +176,6 @@
                 this.$set(this.cmd, 'y', e.clientY - this.OY)
                 this.$set(this.cmd, 'show', true)
                 this.$nextTick(function () {
-                    console.log(this.cmd.y, this.$el)
                     let cmd = this.$refs.commandline
                     setTimeout(function () {
                         cmd.focus()

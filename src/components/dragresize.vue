@@ -123,7 +123,6 @@
                 this.rect.z = v
             })
             this.$watch('box.w', function (v) {
-                console.log('box.width', v)
                 this.rect.w = v
             })
             this.$watch('box.h', function (v) {
