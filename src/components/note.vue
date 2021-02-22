@@ -173,4 +173,8 @@
     .note .v-card__text.static {
         padding: 50px 25px 25px 25px;
     }
+
+    .v-application .note a {
+        color: white;
+    }
 </style>
