@@ -15,7 +15,7 @@
     "interactjs": "^1.9.18",
     "jquery": "^3.5.1",
     "jsdom": "^16.2.2",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "panzoom": "^9.2.4",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
