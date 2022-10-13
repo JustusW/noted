@@ -21,7 +21,7 @@
     "sass-loader": "^8.0.2",
     "subjx": "^0.2.7",
     "tiptap": "^1.27.1",
-    "tiptap-extensions": "^1.29.1",
+    "tiptap-extensions": "^1.35.2",
     "tiptap-vuetify": "^2.20.0",
     "vue": "^2.6.11",
     "vue-drag-resize": "^1.3.2",
