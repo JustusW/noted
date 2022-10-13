@@ -16,6 +16,11 @@ import router from './routes'
 
 Vue.use(CKEditor)
 Vue.use(Vuetify)
+
+export default new Vuetify({
+    theme: { dark: true },
+})
+
 Vue.use(Vue2TouchEvents, {
     disableClick: true
 })

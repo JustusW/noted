@@ -9,7 +9,7 @@
         />
         <v-app-bar
                 app
-                color="indigo"
+                color="secondary"
                 dark
         >
             <v-app-bar-nav-icon @click.stop="showMainMenu"></v-app-bar-nav-icon>
@@ -24,7 +24,7 @@
             </v-container>
         </v-main>
         <v-footer
-                color="indigo"
+                color="secondary"
                 app
         >
             <span class="white--text">&copy; 2019</span>

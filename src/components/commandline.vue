@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-chip dark color="indigo darken-2" @dblclick.stop="" class="commandline">
+        <v-chip dark color="secondary darken-2" @dblclick.stop="" class="commandline">
             <span class="cmdbtn cmdbtn-left">
                 <v-speed-dial
                         style="display: inline;"
@@ -12,12 +12,12 @@
                             add
                         </v-btn>
                     </template>
-                    <v-btn color="indigo darken-2" dark fab small class="material-icons"
+                    <v-btn color="secondary darken-2" dark fab small class="material-icons"
                            style="font-size: 1.5rem;"
                            @click="emitCommand('newNote')">
                         bookmark
                     </v-btn>
-                    <v-btn color="indigo darken-2" dark fab small class="material-icons"
+                    <v-btn color="secondary darken-2" dark fab small class="material-icons"
                            style="font-size: 1.5rem;"
                            @click="emitCommand('newContainer')">
                         view_compact

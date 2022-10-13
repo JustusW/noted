@@ -1,6 +1,6 @@
 <template>
     <v-app id="noted">
-        <v-app-bar app color="indigo">
+        <v-app-bar app color="secondary">
             <v-menu
                     offset-y
                     bottom
@@ -44,4 +44,10 @@
 </script>
 
 <style>
+
+html, body {
+  overflow: hidden;
+  background: black;
+}
+
 </style>

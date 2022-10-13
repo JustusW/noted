@@ -1,5 +1,5 @@
 <template>
-    <v-main v-if="anchor" class="indigo lighten-3" :style="'background-color: ' + anchor.bgcolor + ' !important'">
+    <v-main v-if="anchor" class="secondary">
         <div style="width: 100%; height: 100%; "
              @dblclick="setCommandline"
              v-touch:tap="setCommandlineTouch"
@@ -54,7 +54,7 @@
                     small
                     @click="$refs.zoom.reset(6 - i)"
             >
-                {{6 - i}}x
+                {{i}}x
             </v-btn>
         </v-speed-dial>
 

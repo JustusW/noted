@@ -4,12 +4,12 @@
             outlined
             shaped
             dark
-            color="indigo lighten-2"
+            color="secondary lighten-1"
             height="100%"
             width="100%"
             @wheel.stop=""
     >
-        <v-toolbar absolute dense collapse color="indigo darken">
+        <v-toolbar absolute dense collapse color="secondary darken-1">
             <v-menu
                     offset-y
                     top
@@ -20,7 +20,7 @@
                 </template>
                 <v-list
                     dark
-                    color="indigo darken">
+                    color="secondary darken">
                   <v-list-item link @click="linkNote" v-touch:tap="linkNote">
                     <v-list-item-icon class="material-icons">link</v-list-item-icon>
                     <v-list-item-content>
@@ -57,7 +57,7 @@
         <v-card-text v-if="note.editing" @keydown.stop="">
             <ckeditor v-model="note.text" :editor="editor" @ready="ready" :config="editorConfig"></ckeditor>
         </v-card-text>
-        <v-dialog v-model="dialog" width="300">
+        <v-dialog v-model="dialog" width="300" class="secondary" dark>
             <v-card>
                 <v-card-title class="headline">
                     Edit Note

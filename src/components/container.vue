@@ -12,7 +12,7 @@
             :scale="anchor.scale"
             ref="dr"
             :drop="true">
-        <div class="noteContainerHandle indigo lighten-4"
+        <div class="noteContainerHandle secondary lighten-4"
              @wheel.stop=""
              v-on:mouseleave="active = false"
              v-on:mouseenter="active = true">
