@@ -1,7 +1,7 @@
 <template>
-    <v-content v-if="anchor" class="indigo lighten-3" :style="'background-color: ' + anchor.bgcolor + ' !important'">
+    <v-main v-if="anchor" class="indigo lighten-3" :style="'background-color: ' + anchor.bgcolor + ' !important'">
         <div style="width: 100%; height: 100%; "
-             @click="setCommandline"
+             @dblclick="setCommandline"
              v-touch:tap="setCommandlineTouch"
              @mousedown="mouseDown"
              @wheel="cmd.show = false"
@@ -76,7 +76,7 @@
         <v-dialog v-model="settingsDialog" width="500">
             <Settings v-model="anchor"></Settings>
         </v-dialog>
-    </v-content>
+    </v-main>
 </template>
 
 <script>

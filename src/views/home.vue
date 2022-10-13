@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <div class="home">
       <h1>Willkommen</h1>
       <v-btn
@@ -17,7 +17,7 @@
 
       </vue-dropzone>
     </div>
-  </v-content>
+  </v-main>
 </template>
 
 <script>

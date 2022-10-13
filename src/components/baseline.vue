@@ -16,13 +16,13 @@
             <v-toolbar-title>Application</v-toolbar-title>
         </v-app-bar>
 
-        <v-content>
+        <v-main>
             <v-container
                     class="fill-height"
             >
                 <router-view></router-view>
             </v-container>
-        </v-content>
+        </v-main>
         <v-footer
                 color="indigo"
                 app

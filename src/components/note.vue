@@ -21,12 +21,18 @@
                 <v-list
                     dark
                     color="indigo darken">
-                    <v-list-item link @click="deleteNote" v-touch:tap="deleteNote">
-                        <v-list-item-icon class="material-icons">delete</v-list-item-icon>
-                        <v-list-item-content>
-                            Delete Note
-                        </v-list-item-content>
-                    </v-list-item>
+                  <v-list-item link @click="linkNote" v-touch:tap="linkNote">
+                    <v-list-item-icon class="material-icons">link</v-list-item-icon>
+                    <v-list-item-content>
+                      Link Note
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item link @click="deleteNote" v-touch:tap="deleteNote">
+                    <v-list-item-icon class="material-icons">delete</v-list-item-icon>
+                    <v-list-item-content>
+                      Delete Note
+                    </v-list-item-content>
+                  </v-list-item>
                     <v-list-item link @click="openSettings" v-touch:tap="openSettings">
                         <v-list-item-icon class="material-icons">settings</v-list-item-icon>
                         <v-list-item-content>
@@ -39,6 +45,7 @@
                             Escape Container
                         </v-list-item-content>
                     </v-list-item>
+                  <div ref="link"></div>
                 </v-list>
             </v-menu>
             <v-btn icon class="material-icons" v-model="note.editing" @click="toggleEditing">
@@ -72,7 +79,6 @@
                     <v-btn @click="deleteNote" dark class="dangerous" color="red">
                         <v-icon>delete</v-icon>
                     </v-btn>
-
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -81,6 +87,7 @@
 
 <script>
     import balloonEditor from '@ckeditor/ckeditor5-build-balloon';
+    import {NotSupportedError} from "core-js/internals/dom-exception-constants";
 
     export default {
         name: 'note',
@@ -137,9 +144,8 @@
             toggleEditing() {
                 this.$set(this.note, 'editing', !this.note.editing)
             },
-            handleClick(item) {
-                let link = '<a href="#/notes/' + item.option.note.id + '">' + item.option.name + '</a>'
-                this.$set(this.note, 'text', link + '<br>' + this.note.text)
+            handleClick() {
+                throw new NotSupportedError("unimplemented")
             },
             touch(e) {
                 this.dialog = true
@@ -152,6 +158,33 @@
                 this.anchor.notes = this.anchor.notes.filter(val => {
                     return val.id !== this.note.id
                 })
+            },
+            selectText(element) {
+                let range
+                if (document.selection) {
+                  // IE
+                  range = document.body.createTextRange()
+                  range.moveToElementText(element)
+                  range.select()
+                } else if (window.getSelection) {
+                  range = document.createRange()
+                  range.selectNode(element)
+                  window.getSelection().removeAllRanges()
+                  window.getSelection().addRange(range)
+                }
+            },
+            linkNote() {
+                let name = this.note.name
+                if (!name) {
+                    name = 'jump'
+                }
+                let b = new Blob(
+                    ['<a href="' + window.location.origin + '#/notes/' + this.note.id + '">' + name + '</a>'],
+                    {type: 'text/html'})
+                let data = [new window.ClipboardItem({
+                    [b.type]: b
+                })]
+                navigator.clipboard.write(data)
             },
         },
     }
