@@ -6,7 +6,6 @@ import Vue2TouchEvents from 'vue2-touch-events'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css' // Ensure you are using css-loader
-import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
 
 
