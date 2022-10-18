@@ -42,7 +42,7 @@
                 let pz = this.pz
 
                 pz.moveTo(0,0)
-                pz.moveTo(-item.x,-item.y)
+                pz.moveTo(-item.x + 20,-item.y + 20)
             }
         },
     }
