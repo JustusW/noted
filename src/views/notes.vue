@@ -249,14 +249,14 @@ export default {
       }
     },
     createNote(ref) {
-      if (ref.text) {
-        ref.x += 25
-        ref.y += 50
-      }
       ref = {
         x: ref.x,
         y: ref.y,
         text: ref.text,
+      }
+      if (ref.text) {
+        ref.x += 25
+        ref.y += 50
       }
       let n = new Note(ref)
       n.editing = true
